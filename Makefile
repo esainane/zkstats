@@ -9,6 +9,9 @@ ZKDIR:=/var/lib/zkreplay/Zero-K
 
 SHELL:=/bin/bash
 
+# XXX: Assumes that ZKDIR contains exactly one hyphen, and that the spring version is separated by another hyphen.
+LATESTSPRING:=$(shell ls -1d $(ZKDIR)/engine/linux64/* | sort --key=1,2d --key=3n --field-separator=- | tail -1)
+
 -include demos/index.mk
 # BATTLEIDS is the set of battle IDs that we can get from the index
 # ALLBATTLEIDS is BATTLEIDS, plus what we already have locally.
