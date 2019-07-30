@@ -6,3 +6,4 @@ summaries/
 .*
 *~
 *.bak
+public/data/live.json
