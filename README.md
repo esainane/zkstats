@@ -38,10 +38,11 @@ mkdir Zero-K
 cd Zero-K
 unzip ../zero-k-portable.zip
 cd ..
-chmod g+w Zero-K/maps/
-chmod g+w Zero-K/engine/linux64
+chmod g+w Zero-K Zero-K/maps/ Zero-K/rapid Zero-K/rapid/repos.springrts.com/ Zero-K/engine Zero-K/packages Zero-K/engine Zero-K/engine/linux64
 find . -perm /o=w | xargs -d \\n chmod o-w
 exit
+mkdir games
+chown zkreplayfetch games
 ```
 
 Permit zkreplayfetch through firewall on HTTPS outbound. When done, get it to fetch an example replay.
