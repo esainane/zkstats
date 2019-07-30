@@ -1,0 +1,181 @@
+/* Ensure sane defaults */
+html, body, #vis, #main, .side {
+  height: 100%;
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+
+/* Top-level layout */
+.side {
+  float: right;
+  border-left: 1px solid lightgray;
+}
+#main {
+  overflow: hidden;
+}
+
+#mask {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+  opacity: .8;
+  -moz-transition: opacity 1s linear;
+  -o-transition: opacity 1s linear;
+  -webkit-transition: opacity 1s linear;
+  transition: opacity 1s linear;
+  top: 0;
+}
+
+body, #main, #status, .side {
+  min-height: 920px;
+}
+
+body {
+  min-width: 1350px;
+}
+
+#status {
+  width: 100%;
+  font-size: smaller;
+}
+
+/* Columns */
+
+/* General column utility */
+.column-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.column-container > div {
+  position: relative;
+  float: left;
+}
+
+/* Separators between columns */
+.column-container-separated > div:first-child:before, .column-container-separated > div:first-child:after {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 0; bottom: -800%; left:-6%;
+  width: 2px;
+  border: 1px solid #555;
+  border-width: 0 1px;
+  margin: 0 0 0 -2px;
+  background: #fff;
+}
+.column-container-separated > div:first-child:after {
+  left: auto; right: -6%;
+  margin: 0 -2px 0 0;
+}
+
+/* Top-level column widths */
+.med {
+  width: 400px;
+}
+
+.thin {
+  width: 200px;
+}
+
+/* Titles */
+h3 {
+  font-weight: normal;
+  margin: 0;
+  padding: 0.2em 0.5em;
+}
+
+/* Axis labels */
+.axis-label {
+  height: 0;
+  position: relative;
+  white-space: nowrap;
+  width: 0;
+}
+
+.x-axis-label {
+  left: 50%;
+}
+
+.y-axis-label {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+}
+
+/* Axis ticks */
+
+.dvchart.vertical-x-axis-ticks g.axis.x .tick text {
+  /* transform: rotate(90deg);
+  text-anchor: start; */
+  text-anchor: end;
+  transform: rotate(-90deg)translate(-3px,-7px);
+}
+
+/* Chart meta info */
+
+p.info {
+  color: #777;
+  font: 10px sans-serif;
+  margin: 0 .4em;
+  padding: 0;
+}
+
+p.filterinfo {
+  font: 11px sans-serif;
+  color: #555;
+  margin: .4em;
+  padding: 0;
+  /* Specify size and block specifically, so that the space needed is always reserved */
+  display: block;
+  height: 11px;
+}
+
+/* Charts */
+
+.dc-chart, .mv-chart {
+  border-bottom: 1px #eee solid;
+  float: left;
+}
+
+/* Utility */
+.fader {
+  -moz-transition: opacity 1s linear;
+  -o-transition: opacity 1s linear;
+  -webkit-transition: opacity 1s linear;
+  transition: opacity 1s linear;
+}
+
+.help {
+  cursor: help;
+}
+
+/* Non-layout critical style niceties */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+  background-color: #ffffff;
+}
+
+a {
+  color: #0066aa;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #005580;
+  text-decoration: underline;
+}

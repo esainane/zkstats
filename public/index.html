@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Datavis</title>
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" type="text/css" href="js/dc/dc.css" />
+
+<body onload="dv.init('data/config.json');">
+  <div id="vis">
+  </div>
+</body>
+
+<!-- Libs -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="js/crossfilter/crossfilter.js"></script>
+<script src="js/dc/dc.js"></script>
+
+<!-- Custom timeranges -->
+<script src="js/util/timerange.js"></script>
+
+<!-- Custom charts -->
+<script src="js/util/matchups.js"></script>
+
+<!-- Main -->
+<script src="js/dvis.js"></script>

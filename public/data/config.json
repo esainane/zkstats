@@ -1,0 +1,97 @@
+{
+  "src": "data/all5.json",
+  "orders": {
+    "facorder": [
+      "Cloakbot Factory",
+      "Shieldbot Factory",
+      "Rover Assembly",
+      "Hovercraft Platform",
+      "Gunship Plant",
+      "Airplane Plant",
+      "Spider Factory",
+      "Jumpbot Factory",
+      "Tank Foundry",
+      "Amphbot Factory",
+      "Shipyard",
+      "Never"
+    ]
+  },
+  "columns": [
+    {
+      "type": "med",
+      "charts": [
+        {
+          "vis": "bar",
+          "dim": "winner_elo_lead",
+          "group": 100,
+          "elasticX": true,
+          "dim_pretty": "Winner's ELO Advantage"
+        },{
+          "vis": "bar",
+          "dim": "winner_elo",
+          "group": 100,
+          "elasticX": true,
+          "dim_pretty": "Winner's ELO Rating"
+        },{
+          "vis": "bar",
+          "dim": "loser_elo",
+          "group": 100,
+          "elasticX": true,
+          "dim_pretty": "Loser's ELO Rating"
+        },{
+          "vis": "bar",
+          "dim": "duration",
+          "group": 5000,
+          "elasticX": true,
+          "dim_pretty": "Game Time (Frames)",
+          "verticalXAxisTicks": true
+        }
+      ]
+    },{
+      "type": "thin",
+      "charts": [
+        {
+          "vis": "pie",
+          "dim": "winner_fac",
+          "dim_pretty": "Winners's First Factory"
+        },{
+          "vis": "pie",
+          "dim": "loser_fac",
+          "dim_pretty": "Loser's First Factory"
+        }
+      ]
+    },{
+      "type": "thin",
+      "charts": [
+        {
+          "vis": "pie",
+          "dim": "map",
+          "dim_pretty": "Matchmaking Map Used"
+        }
+      ]
+    },{
+      "charts": [
+        {
+          "vis": "bar",
+          "dim": "started",
+          "dates": true,
+          "elasticX": true,
+          "group": "Hour6",
+          "dim_pretty": "Match start time",
+          "verticalXAxisTicks": true
+        },{
+          "vis": "matchups",
+          "dim": {
+            "id": "matchups",
+            "type": "triangle",
+            "rows": "winner_fac",
+            "cols": "loser_fac"
+          },
+          "verticalXAxisTicks": true,
+          "order": "facorder",
+          "dim_pretty": "Matchups"
+        }
+      ]
+    }
+  ]
+}
