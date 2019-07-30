@@ -1,0 +1,8 @@
+Zero-K/
+demos/
+maps/
+stats/
+summaries/
+.*
+*~
+*.bak
