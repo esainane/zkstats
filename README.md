@@ -83,3 +83,21 @@ cd
 ```
 
 Process automated in the Makefile.
+
+## Visualisation
+
+This repository contains example data at `public/data/all7.json`, and is configured to find data at `public/data/live.json`. A symbolic link, `public/data/live.example.json` points to this example data. 
+
+To copy this link into the live location, to use the example data:
+
+```bash
+cp -a public/data/live{.example,}.json
+```
+
+To point to the latest generated file:
+
+```bash
+ln -s ../../summaries/all.json public/data/live.json
+```
+
+Point your webserver at the `public/` directory to begin serving.
