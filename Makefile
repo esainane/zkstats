@@ -85,7 +85,7 @@ games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 
 # Download different springrts versions.
 $(ZKDIR)/engine/linux64/%/spring-headless:
-	$(LATESTSPRING)/pr-downloader --download-engine "$*" --filesystem-writepath "$(ZKDIR)"
+	$(LATESTSPRING)/pr-downloader --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
 
 # Download different maps.
 export mapmanualfallback
