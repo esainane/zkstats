@@ -19,6 +19,7 @@ ALLBATTLEIDS:=$(BATTLEIDS) $(shell find demos -mindepth 1 -type d | xargs -n1 ba
 REPLAYS:=$(addprefix demos/,$(addsuffix /replay.sdfz, $(ALLBATTLEIDS)))
 RDETAILS:=$(addprefix demos/,$(addsuffix /detail.html, $(ALLBATTLEIDS)))
 EVENTS:=$(addprefix stats/,$(addsuffix /events.log, $(ALLBATTLEIDS)))
+EVENTDEPS:=$(addprefix demos/,$(addsuffix /events.log.deps, $(ALLBATTLEIDS)))
 SUMMARIES:=$(addprefix summaries/,$(addsuffix /summary.json, $(ALLBATTLEIDS)))
 
 demos: demos/index.mk fetch-replays $(REPLAYS) $(RDETAILS)
@@ -47,7 +48,7 @@ s_^.*<a href='\([^']\+\)'.*$$_\1_p
 endef
 
 define getspringversion
-/Engine version/{
+/Engine version:/{
 n
 n
 n
@@ -55,35 +56,47 @@ s_^ *\([-a-zA-Z0-9_.]\+\)$$_\1_p
 }
 endef
 
+define getzkversion
+/Game version:/{
+n
+n
+n
+s_^ *\([-a-zA-Z0-9_. ]\+\)$$_\1_p
+}
+endef
+
+export getspringversion
+export getzkversion
+# This tries to build a dependency file once we have the battle detail available.
+demos/%/events.log.deps: demos/%/detail.html
+	MAPID=$$(sed -n 's_^.*<a href="/Maps/Detail/\([0-9]\+\)".*$$_\1_p' "$<") && echo "demos/$*/replay.sdfz: | maps/$${MAPID}.html" > "$@.tmp"
+	SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && echo "demos/$*/replay.sdfz: | $(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless" >> "$@.tmp"
+	ZKVERSION=$$(sed -n "$${getzkversion}" demos/$*/detail.html) && echo "$${ZKVERSION}" && echo "demos/$*/replay.sdfz: | games/$$(sed 's/ /\\ /g' <<< "$${ZKVERSION}")" >> "$@.tmp"
+	mv -f "$@.tmp" "$@"
+
+# Index for rapid downloader.
+$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz:
+	$(LATESTSPRING)/pr-downloader --filesystem-writepath "$(ZKDIR)"
+
+# Download different Zero-K versions.
+games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
+	mkdir -p games
+	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | cut -f2 -d, ) && $(LATESTSPRING)/pr-downloader --download-game "$*" --filesystem-writepath "$(ZKDIR)" && ln -s "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
+
+# Download different springrts versions.
+$(ZKDIR)/engine/linux64/%/spring-headless:
+	$(LATESTSPRING)/pr-downloader --download-engine "$*" --filesystem-writepath "$(ZKDIR)"
+
+# Download different maps.
+export mapmanualfallback
 maps/%.html:
 	BASE=$$(pwd) && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd maps/ && curl -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1 | xargs -n1 -d \\n curl -O -R; fi || (echo "FAILED getting map ID $*" ; rm -f "$${BASE}/$@" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
 
+# Finally, link replays to the Zero-K version, engine version, and map that it depends on.
+-include $(EVENTDEPS)
 
-$(ZKDIR)/engine/linux64/%/spring-headless:
-	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetching spring engine version $*" ===; echo; curl "https://springrts.com/dl/buildbot/default/maintenance/$*/linux64/spring_%7bmaintenance%7d$*_minimal-portable-linux64-static.7z" > "$${WORK}/$*.7z" && cd "$(ZKDIR)/engine/linux64" && mkdir "$*" && cd "$*" && 7z x "$${WORK}/$*.7z" && chmod -R o-w . && chmod -R g+rX . ; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
-
-# TODO: Cleaner dependency handling, rather than recipes with side effects.
-# This tries to build a dependency file once we have the battle detail available.
-stats/%/events.log.deps: demos/%/detail.html
-	MAPID=$$(sed -n 's_^.*<a href="/Maps/Detail/\([0-9]\+\)".*$$_\1_p' "$@") && echo 'stats/$*/spring.log stats/$*/events.log: maps/$${MAPID}.html'
-	SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && echo 'stats/$*/spring.log stats/$*/events.log: $$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless'
-	# TODO
-	ZKVERSION=$$(sed -n "$${getzkversion}" demos/$*/detail.html) && echo "stats/$*/spring.log stats/$*/events.log: $(ZKDIR)/engine" >> "$@"
-
-rapid/repos.springrts.com/zk/versions.gz:
-	# TODO
-
-# -include stats/*/events.log.deps
-
-
-export mapmanualfallback
-export getspringversion
 demos/%/detail.html:
 	mkdir -p "$(dir $@)" && cd "$(dir $@)" && curl "https://zero-k.info/Battles/Detail/$*" > detail.html
-	# HACK: While we're here, ensure we have the map. Not parallel safe.
-	MAPID=$$(sed -n 's_^.*<a href="/Maps/Detail/\([0-9]\+\)".*$$_\1_p' "$@") && BASE=$$(pwd) && if [ ! -f "maps/$${MAPID}.html" ]; then echo; echo "=== Attempting to fetch map $${MAPID}... ==="; echo; cd maps/ && curl -R "https://zero-k.info/Maps/Detail/$${MAPID}" > "$${MAPID}.html" && cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$${MAPID}.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$${MAPID}.html") | head -1 | xargs -n1 -d \\n curl -O -R; fi || (echo "FAILED getting map ID $${MAPID}" ; rm -f "$${BASE}/$@" ; mv -f "$${BASE}/maps/$${MAPID}.html" "$${BASE}/maps/FAILED.$${MAPID}.html" ; false)
-	# HACK: Make sure we have the engine. Not parallel safe.
-	WORK=$$(mktemp -d) && trap 'rm -rf $${WORK}"' EXIT && SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && ( test -d "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}" || ( echo; echo "=== Attempting to fetch spring engine version $${SPRINGVERSION}" ===; echo; curl "https://springrts.com/dl/buildbot/default/maintenance/$${SPRINGVERSION}/linux64/spring_%7bmaintenance%7d$${SPRINGVERSION}_minimal-portable-linux64-static.7z" > "$${WORK}/$${SPRINGVERSION}.7z" && cd "$(ZKDIR)/engine/linux64" && mkdir "$${SPRINGVERSION}" && cd "$${SPRINGVERSION}" && 7z x "$${WORK}/$${SPRINGVERSION}.7z" && chmod -R o-w . && chmod -R g+rX . )) && test -x "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless"
 
 # replay.sdfz is a symlink to the full replay with a more accessible name
 # This recipe downloads the replay file as part of the process
