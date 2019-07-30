@@ -38,7 +38,7 @@ mkdir Zero-K
 cd Zero-K
 unzip ../zero-k-portable.zip
 cd ..
-chmod g+w Zero-K Zero-K/maps/ Zero-K/rapid Zero-K/rapid/repos.springrts.com/ Zero-K/engine Zero-K/packages Zero-K/engine Zero-K/engine/linux64
+chmod g+w Zero-K Zero-K/maps/ Zero-K/rapid/ Zero-K/rapid/repos.springrts.com/ Zero-K/engine Zero-K/packages/ Zero-K/engine/ Zero-K/engine/linux64/
 chmod g+w -R Zero-K/pool/
 find . -perm /o=w | xargs -d \\n chmod o-w
 exit
