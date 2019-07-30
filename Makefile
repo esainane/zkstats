@@ -93,7 +93,8 @@ demos/%/replay.sdfz: | demos/%/detail.html
 stats/%/spring.log stats/%/events.log: demos/%/replay.sdfz
 	mkdir -p "$(dir $@)"
 	mkdir -p "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/"
-	WORK=$$(mktemp -d) && SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && cat "$(ZKDIR)/springsettings.cfg" <(echo ZKHeadlessReplay=$*) > "$${WORK}/springsettings.$*.cfg" && /usr/bin/time -v "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless" -write-dir "$(ZKDIR)" -config "$${WORK}/springsettings.$*.cfg" $< 2>&1 | tee stats/$*/spring.log && ln -sf "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/events.log" "stats/$*/events.log"; rm -rf "$${WORK}"; test -e "stats/$*/events.log"
+	WORK=$$(mktemp -d) && SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && cat "$(ZKDIR)/springsettings.cfg" <(echo ZKHeadlessReplay=$*) > "$${WORK}/springsettings.$*.cfg" && /usr/bin/time -v "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless" -write-dir "$(ZKDIR)" -config "$${WORK}/springsettings.$*.cfg" $< 2>&1 | tee stats/$*/spring.log; rm -rf "$${WORK}"
+	test -e "stats/$*/events.log" && mv -f "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/events.log" "stats/$*/events.log"
 
 # Postprocess the events from the replay
 summaries/%/summary.json: stats/%/events.log postprocess.py
