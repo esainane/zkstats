@@ -81,7 +81,7 @@ $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz:
 # Download different Zero-K versions.
 games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 	mkdir -p games
-	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | cut -f2 -d, ) && $(LATESTSPRING)/pr-downloader --download-game "$*" --filesystem-writepath "$(ZKDIR)" && ln -s "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
+	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | cut -f2 -d, ) && $(LATESTSPRING)/pr-downloader --download-game "$*" --filesystem-writepath "$(ZKDIR)" && test -e "$(ZKDIR)/packages/$${ZKHASH}.sdp" && ln -sf "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
 
 # Download different springrts versions.
 $(ZKDIR)/engine/linux64/%/spring-headless:
