@@ -67,6 +67,14 @@
           "vis": "pie",
           "dim": "map",
           "dim_pretty": "Matchmaking Map Used"
+        },{
+          "vis": "pie",
+          "dim": "zk_version",
+          "dim_pretty": "Zero-K Version"
+        },{
+          "vis": "pie",
+          "dim": "spring_version",
+          "dim_pretty": "Spring RTS Version"
         }
       ]
     },{

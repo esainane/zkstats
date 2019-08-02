@@ -2,7 +2,7 @@
 
 import json
 import re
-from sys import argv, stderr
+from sys import argv, stderr, exit
 
 filename = argv[1]
 id = int(argv[2])
@@ -23,6 +23,8 @@ win = None
 duration = None
 battlemap = None
 started = None
+sp = None
+zk = None
 
 def d(*args, **kwargs):
     print(file=stderr, *args, **kwargs)
@@ -45,6 +47,20 @@ with open('demos/%d/detail.html' % id, 'r') as f:
         if m:
             started = '%s-%s-%s %s:%s:%s' % (m.group('year'), m.group('month'), m.group('day'), m.group('hours'), m.group('minutes'), m.group('seconds'))
 
+mapdef = re.compile(r'\| maps/(?P<map>.*)\.html$')
+spver = re.compile(r'engine/linux64/(?P<spver>[^/]*)/')
+zkver = re.compile(r'\| games/(?P<zkver>Zero-K\\ [v0-9.]+)$')
+
+with open('demos/%d/events.log.deps' % id, 'r') as f:
+    for line in f.readlines():
+        m = spver.search(line)
+        if m:
+            sp = m.group('spver')
+            continue
+        m = zkver.search(line)
+        if m:
+            zk = m.group('zkver').replace(r'\ ', ' ')
+            continue
 
 with open(filename, 'r') as f:
     for line in f.readlines():
@@ -93,6 +109,8 @@ summary['duration'] = int(duration)
 summary['gameid'] = id
 summary['started'] = started
 summary['map'] = battlemap or 'Unknown'
+summary['zk_version'] = zk
+summary['spring_version'] = sp
 
 d(repr(summary))
 
