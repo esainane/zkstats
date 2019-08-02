@@ -58,6 +58,10 @@
           "vis": "pie",
           "dim": "loser_fac",
           "dim_pretty": "Loser's First Factory"
+        },{
+          "vis": "pie",
+          "dim": "mirror_match",
+          "dim_pretty": "Mirror Match"
         }
       ]
     },{

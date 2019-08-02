@@ -1,7 +1,9 @@
 var dv = (function(dv) {
   "use strict";
   function dataCoerce(data, config) {
-    /* TODO */
+    for (let match of data) {
+      match.mirror_match = match.winner_fac === match.loser_fac;
+    }
     return data;
   }
   function configCoerce(config) {
