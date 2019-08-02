@@ -186,7 +186,7 @@ var dv = (function(dv) {
         .keyAccessor(d => d.key[1])
         .valueAccessor(d => d.key[0])
         .colorAccessor(d => { const wr = d.value[0] / (d.value[0] + d.value[1]); return wr; })
-        .colors(colorScale)
+        .colors(c => isNaN(c) ? '#ffffff' : colorScale(c))
         ;
       if (conf.order) {
         // console.log('order range:', order.range());
