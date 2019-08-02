@@ -71,7 +71,7 @@
         {
           "vis": "pie",
           "dim": "winner_fac",
-          "dim_pretty": "Winners's First Factory",
+          "dim_pretty": "Winner's First Factory",
           "colors": "fac"
         },{
           "vis": "pie",
