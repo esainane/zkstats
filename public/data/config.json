@@ -4,14 +4,14 @@
     "facorder": [
       "Cloakbot Factory",
       "Shieldbot Factory",
-      "Rover Assembly",
-      "Hovercraft Platform",
-      "Gunship Plant",
-      "Airplane Plant",
       "Spider Factory",
       "Jumpbot Factory",
-      "Tank Foundry",
       "Amphbot Factory",
+      "Hovercraft Platform",
+      "Rover Assembly",
+      "Tank Foundry",
+      "Gunship Plant",
+      "Airplane Plant",
       "Shipyard",
       "Never"
     ]
