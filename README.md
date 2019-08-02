@@ -67,7 +67,7 @@ ln -s ../../../Widgets/replay_stats.lua .
 
 We will need to alter the LuaUI config directly, once, to enable local widgets. From there, our local replay widgets will handle configuration.
 
-**Zero-K/LuaUI/ZK_config.lua**
+**Zero-K/LuaUI/Config/ZK_data.lua**
 ```
         ["Local Widgets Config"] = {
                 localWidgets = true,
