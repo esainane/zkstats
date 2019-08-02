@@ -61,8 +61,8 @@ su - zkreplay -s /bin/bash
 cd Zero-K
 mkdir -p LuaUI/Widgets/
 cd $_
-cat > replay_speed.lua
-cat > replay_stats.lua
+ln -s ../../../Widgets/replay_speed.lua .
+ln -s ../../../Widgets/replay_stats.lua .
 ```
 
 We will need to alter the LuaUI config directly, once, to enable local widgets. From there, our local replay widgets will handle configuration.
