@@ -84,8 +84,12 @@ games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | cut -f2 -d, ) && $(LATESTSPRING)/pr-downloader --download-game "$*" --filesystem-writepath "$(ZKDIR)" && test -e "$(ZKDIR)/packages/$${ZKHASH}.sdp" && ln -sf "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
 
 # Download different springrts versions.
+# pr-downloader variant reverted until it can be reworked to fit the zk directory structure?
+#$(ZKDIR)/engine/linux64/%/spring-headless:
+#	$(LATESTSPRING)/pr-downloader --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
+
 $(ZKDIR)/engine/linux64/%/spring-headless:
-	$(LATESTSPRING)/pr-downloader --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
+	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetching spring engine version $*" ===; echo; curl "https://springrts.com/dl/buildbot/default/maintenance/$*/linux64/spring_%7bmaintenance%7d$*_minimal-portable-linux64-static.7z" > "$${WORK}/$*.7z" && cd "$(ZKDIR)/engine/linux64" && mkdir "$*" && cd "$*" && 7z x "$${WORK}/$*.7z" && chmod -R o-w . && chmod -R g+rX . ; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
 
 # Download different maps.
 export mapmanualfallback
