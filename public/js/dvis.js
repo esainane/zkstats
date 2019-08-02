@@ -174,6 +174,7 @@ var dv = (function(dv) {
         coerce = d => [d[conf.dim.rows], d[conf.dim.cols]].sort();
       }
       const h = dim(v, conf, coerce);
+      const colorScale = d3.piecewise(d3.interpolateHclLong, ['#c44', '#ccc', '#44c']); /* TODO */
       const ret = matchupChart("#" + dl + "-dvchart")
         .margins({left: 110, right: 18, top: 5, bottom: 110})
         .height(400)
@@ -185,8 +186,8 @@ var dv = (function(dv) {
         .keyAccessor(d => d.key[1])
         .valueAccessor(d => d.key[0])
         .colorAccessor(d => { const wr = d.value[0] / (d.value[0] + d.value[1]); return wr; })
-        .linearColors(['#c44', '#c69', '#bbb', '#69c', "#44c"])
-        .colorDomain([0,0.4,0.5,0.6,1]);
+        .colors(colorScale)
+        ;
       if (conf.order) {
         // console.log('order range:', order.range());
 
