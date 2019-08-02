@@ -1,19 +1,27 @@
 var dv = (function(dv) {
   "use strict";
-  function coerce(data, config) {
+  function dataCoerce(data, config) {
     /* TODO */
     return data;
+  }
+  function configCoerce(config) {
+    for (let column of config.columns) {
+      for (let chart of column.charts) {
+        chart.parent = column;
+      }
+    }
+    return config;
   }
   const mapSort = f => (l,r) => Math.sign(f(l) - f(r));
   dc.dateFormat = d3.timeFormat("%Y-%m-%d %H:%M");
   dv.init = async function(configloc) {
-    const globalConfig = await d3.json(configloc);
-    console.log(globalConfig);
+    let globalConfig = await d3.json(configloc);
     let data = await d3.json(globalConfig.src);
+    globalConfig = configCoerce(globalConfig);
     function dimId(conf) {
       return conf.dim.id || conf.dim.toLowerCase();
     }
-    data = coerce(data);
+    data = dataCoerce(data);
     window.data = data;
     const cfdata = crossfilter(data);
     const vis = d3.select("#vis");
