@@ -142,9 +142,6 @@ var dv = (function(dv) {
       if ('elasticX' in conf) {
         ret.elasticX(conf.elasticX);
       }
-      // if (conf.round) {
-      //   ret.xUnits((start, end, domain) => (end - start) / conf.round);
-      // }
       charts.set(v, ret);
       return ret;
     }
@@ -167,21 +164,17 @@ var dv = (function(dv) {
       if (charts.has(v)) {
         return charts.get(v);
       }
-      const dl = dimId(conf);  // v.toLowerCase();
+      const dl = dimId(conf);
       let order;
       let coerce, values;
       if (conf.order) {
         values = globalConfig.orders[conf.order];
         const valueOrder = values.map((d,i) => i);
-        // console.log(values, '=>', valueOrder);
         order = d3.scaleOrdinal().domain(values).range(valueOrder);
         window.order = order;
         const sorter = mapSort(order);
         window.sorter = sorter;
         coerce = d => { const ret = [d[conf.dim.rows], d[conf.dim.cols]].sort(); return ret; };
-        for (let v of values) {
-          // console.log('CHECK:', v, '=>', order(v));
-        }
       } else {
         coerce = d => [d[conf.dim.rows], d[conf.dim.cols]].sort();
       }
@@ -201,8 +194,6 @@ var dv = (function(dv) {
         .colors(c => isNaN(c) ? '#ffffff' : colorScale(c))
         ;
       if (conf.order) {
-        // console.log('order range:', order.range());
-
         const incrementingRange = values.map((d,i) => i);
 
         const directOrder = d3.scaleOrdinal().domain(values).range(incrementingRange);
@@ -210,13 +201,9 @@ var dv = (function(dv) {
         const reverseOrder = d3.scaleOrdinal().domain(reversedValues).range(incrementingRange);
         ret
           .rowOrdering(mapSort(reverseOrder))
-          // .rowOrdering(directOrder)
           .colOrdering(mapSort(directOrder))
-          // .colOrdering(reverseOrder)
           .rows(reversedValues)
-          // .rows(directValue)
           .cols(values)
-          // .cols(reverseValue)
           ;
       }
       if ('verticalXAxisTicks' in conf) {
@@ -233,7 +220,6 @@ var dv = (function(dv) {
         .selectAll(".dvchart").data(function(d) { return d.charts; })
           .enter().append("div")
           .attr("id", function(d) { return dimId(d) + "-dvchart"; })
-          // .attr("class", "dvchart")
           ;
     chartsSel.append("h3").text(function(d) { return d.dim_pretty || d.dim; });
     const filterinfoSel = chartsSel.append("p").attr("class", "filterinfo").append("span").attr("class", "reset").attr("style", "display: none");
