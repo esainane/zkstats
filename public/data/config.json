@@ -17,6 +17,23 @@
       "Never"
     ]
   },
+  "colors": {
+    "fac": {
+      "Cloakbot Factory": "#498fcb",
+      "Shieldbot Factory": "#cb6e49",
+      "Rover Assembly": "#d7a43e",
+      "Hovercraft Platform": "#66af9a",
+      "Spider Factory": "#68ad52",
+      "Jumpbot Factory": "#ad527a",
+      "Tank Foundry": "#413582",
+      "Amphbot Factory": "#40cdcc",
+      "Airplane Plant": "#eff632",
+      "Gunship Plant": "#b2ee65",
+      "Shipyard": "#6e8df0",
+      "Strider Hub": "#ee0e08",
+      "Never": "#ffffff"
+    }
+  },
   "columns": [
     {
       "type": "med",
@@ -54,11 +71,13 @@
         {
           "vis": "pie",
           "dim": "winner_fac",
-          "dim_pretty": "Winners's First Factory"
+          "dim_pretty": "Winners's First Factory",
+          "colors": "fac"
         },{
           "vis": "pie",
           "dim": "loser_fac",
-          "dim_pretty": "Loser's First Factory"
+          "dim_pretty": "Loser's First Factory",
+          "colors": "fac"
         },{
           "vis": "pie",
           "dim": "mirror_match",

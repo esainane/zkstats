@@ -207,6 +207,10 @@ var dv = (function(dv) {
       return ret;
     }
     function chartPostprocessCommon(ret, v, conf) {
+      if (conf.colors) {
+        const mapping = globalConfig.colors[conf.colors];
+        ret.colors(k => mapping[k]);
+      }
       ret
         .transitionDuration(500)
         ;
