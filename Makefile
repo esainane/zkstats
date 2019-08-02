@@ -26,7 +26,7 @@ demos: demos/index.mk fetch-replays $(REPLAYS) $(RDETAILS)
 
 stats: $(EVENTS)
 
-summaries: $(SUMMARIES) summary/all.json
+summaries: $(SUMMARIES) summaries/all.json
 
 .PHONY: default demos stats summaries fetch-replays demos/index.mk
 .SECONDARY:
