@@ -74,6 +74,10 @@ body {
 }
 
 /* Top-level column widths */
+.wide {
+  width: 600px;
+}
+
 .med {
   width: 400px;
 }

@@ -78,6 +78,7 @@
         }
       ]
     },{
+      "type": "wide",
       "charts": [
         {
           "vis": "bar",

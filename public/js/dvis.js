@@ -85,15 +85,17 @@ var dv = (function(dv) {
       return ret;
     }
     const charts = window.charts = new Map();
+    const colTypeToWidth = { 'thin': 200, 'med': 400, 'wide': 600 };
     function pie(v, conf) {
       if (charts.has(v)) {
         return charts.get(v);
       }
       const dl = dimId(conf);
       const h = dim(v, conf);
+      const pieSize = 0.8;
       const ret = dc.pieChart("#" + dl + "-dvchart")
-        .radius(80)
-        .height(165)
+        .radius(colTypeToWidth[conf.parent.type] * pieSize / 2)
+        .height(colTypeToWidth[conf.parent.type] * pieSize + 5)
         .dimension(h.dim)
         .group(h.group)
         .transitionDuration(500);
@@ -125,7 +127,7 @@ var dv = (function(dv) {
       const ret = dc.barChart("#" + dl + "-dvchart")
         .margins({left: 60, right: 18, top: 5, bottom: 60})
         .height(130)
-        .width(400)
+        .width(colTypeToWidth[conf.parent.type])
         .elasticY(true)
         .gap(1)
         .renderHorizontalGridLines(true)
@@ -185,8 +187,8 @@ var dv = (function(dv) {
       const colorScale = d3.piecewise(d3.interpolateHclLong, ["#ff0000", "#cccccc", "#0000ff"]);
       const ret = matchupChart("#" + dl + "-dvchart")
         .margins({left: 110, right: 18, top: 5, bottom: 110})
-        .height(400)
-        .width(400)
+        .height(colTypeToWidth[conf.parent.type])
+        .width(colTypeToWidth[conf.parent.type])
         .title(function(d) { return d.key + ": " + d.value; })
         .dimension(h.dim)
         .group(h.group)
