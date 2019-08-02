@@ -234,12 +234,12 @@ var dv = (function(dv) {
           // .attr("class", "dvchart")
           ;
     chartsSel.append("h3").text(function(d) { return d.dim_pretty || d.dim; });
-    const filterinfoSel = chartsSel.append("p").attr("class", "filterinfo").append("span").attr("class", "reset").attr("style", "display: none").text("Active filter:");
-    filterinfoSel.append('span').attr('class', 'filter');
-    filterinfoSel.append('a').attr('class', 'reset').attr('style', 'display: none').attr('href', '#').text('clear').on('click', d => {
+    const filterinfoSel = chartsSel.append("p").attr("class", "filterinfo").append("span").attr("class", "reset").attr("style", "display: none");
+    filterinfoSel.append('a').attr('class', 'reset').attr('style', 'display: none').attr('href', '#').text('Clear filter:').on('click', d => {
       charts.get(d.dim).filterAll();
       dc.redrawAll();
     });
+    filterinfoSel.append('span').attr('class', 'filter');
     chartsSel.selectAll('.info').data(d => d.info ? [d.info] : []).enter().append('p').attr('class', 'info').text(d => d);
     chartsSel.each(function(d) {
       const factories = {
