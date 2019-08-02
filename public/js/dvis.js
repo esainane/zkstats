@@ -100,8 +100,6 @@ var dv = (function(dv) {
         .height(colTypeToWidth[conf.parent.type] * pieSize + 5)
         .dimension(h.dim)
         .group(h.group)
-        .transitionDuration(500);
-      charts.set(v, ret);
       return ret;
     }
     function bar(v, conf) {
@@ -137,12 +135,10 @@ var dv = (function(dv) {
         .dimension(h.dim)
         .group(h.group)
         .x(xScale)
-        .transitionDuration(500)
         .barWidthMultiplier((conf.dates ? '1' : conf.group) || 1);
       if ('elasticX' in conf) {
         ret.elasticX(conf.elasticX);
       }
-      charts.set(v, ret);
       return ret;
     }
     function barFixed(v, conf) {
@@ -187,7 +183,6 @@ var dv = (function(dv) {
         .title(function(d) { return d.key + ": " + d.value; })
         .dimension(h.dim)
         .group(h.group)
-        .transitionDuration(500)
         .keyAccessor(d => d.key[1])
         .valueAccessor(d => d.key[0])
         .colorAccessor(d => { const wr = d.value[0] / (d.value[0] + d.value[1]); return wr; })
@@ -209,6 +204,12 @@ var dv = (function(dv) {
       if ('verticalXAxisTicks' in conf) {
         ret.verticalXAxisTicks(true);
       }
+      return ret;
+    }
+    function chartPostprocessCommon(ret, v, conf) {
+      ret
+        .transitionDuration(500)
+        ;
       charts.set(v, ret);
       return ret;
     }
@@ -236,7 +237,7 @@ var dv = (function(dv) {
         'bar': bar,
         'matchups': matchups
       };
-      factories[d.vis](d.dim, d);
+      chartPostprocessCommon(factories[d.vis](d.dim, d), d.dim, d);
     });
     chartsSel.attr('class', function(conf) {
       let extraClasses = '';
