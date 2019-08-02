@@ -72,7 +72,7 @@ function matchupChart(parent, chartGroup) {
     var _boxOnClick = function (d) {
         var filter = d.key;
         dc.events.trigger(function () {
-            _chart.filter(dc.filters.TwoDimensionalFilter(filter));
+            _chart.filter(dc.filters.TwoDimensionalFilter(filter.slice().sort()));
             _chart.redrawGroup();
         });
     };
@@ -82,12 +82,12 @@ function matchupChart(parent, chartGroup) {
             return d.key[axis] === value;
         });
         var unfilteredCellsOnAxis = cellsOnAxis.filter(function (d) {
-            return !_chart.hasFilter(d.key);
+            return !_chart.hasFilter(d.key.slice().sort());
         });
         dc.events.trigger(function () {
             var selection = unfilteredCellsOnAxis.empty() ? cellsOnAxis : unfilteredCellsOnAxis;
             var filters = selection.data().map(function (kv) {
-                return dc.filters.TwoDimensionalFilter(kv.key);
+                return dc.filters.TwoDimensionalFilter(kv.key.slice().sort());
             });
             _chart.filter([filters]);
             _chart.redrawGroup();
@@ -440,7 +440,7 @@ function matchupChart(parent, chartGroup) {
     };
 
     _chart.isSelectedNode = function (d) {
-        return _chart.hasFilter(d.key);
+        return _chart.hasFilter(d.key.slice().sort());
     };
 
     return _chart.anchor(parent, chartGroup);
