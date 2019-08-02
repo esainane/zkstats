@@ -81,7 +81,7 @@ $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz:
 # Download different Zero-K versions.
 games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 	mkdir -p games
-	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | cut -f2 -d, ) && $(LATESTSPRING)/pr-downloader --download-game "$*" --filesystem-writepath "$(ZKDIR)" && test -e "$(ZKDIR)/packages/$${ZKHASH}.sdp" && ln -sf "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
+	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | grep '^zk:git:' | cut -f2 -d, ) && echo && echo "Downloading "$*" hash $${ZKHASH}..." && echo && $(LATESTSPRING)/pr-downloader --download-game "$*" --filesystem-writepath "$(ZKDIR)" && test -e "$(ZKDIR)/packages/$${ZKHASH}.sdp" && ln -sf "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
 
 # Download different springrts versions.
 # pr-downloader variant reverted until it can be reworked to fit the zk directory structure?
