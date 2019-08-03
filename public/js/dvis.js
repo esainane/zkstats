@@ -2,6 +2,7 @@ var dv = (function(dv) {
   "use strict";
   function dataCoerce(data, config) {
     const fac_progression_dch_fixup = a => {
+      a = a.reduce((a,d) => a.includes(d) ? a : (a.push(d), a), []);
       if (a.slice(-1) !== 'Never') {
         a.push('Never');
       }
