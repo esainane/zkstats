@@ -1,8 +1,17 @@
 var dv = (function(dv) {
   "use strict";
   function dataCoerce(data, config) {
+    const fac_progression_dch_fixup = a => {
+      if (a.slice(-1) !== 'Never') {
+        a.push('Never');
+      }
+      return a.slice(0,3);
+    };
     for (let match of data) {
       match.mirror_match = match.winner_fac === match.loser_fac;
+
+      match.winner_fac_prog = fac_progression_dch_fixup(match.winner_fac_prog);
+      match.loser_fac_prog = fac_progression_dch_fixup(match.loser_fac_prog);
     }
     return data;
   }
@@ -88,18 +97,40 @@ var dv = (function(dv) {
     }
     const charts = window.charts = new Map();
     const colTypeToWidth = { 'thin': 200, 'med': 400, 'wide': 600 };
+    const circularChartSize = 0.8;
     function pie(v, conf) {
       if (charts.has(v)) {
         return charts.get(v);
       }
       const dl = dimId(conf);
       const h = dim(v, conf);
-      const pieSize = 0.8;
+      const radius = colTypeToWidth[conf.parent.type] * circularChartSize / 2;
       const ret = dc.pieChart("#" + dl + "-dvchart")
-        .radius(colTypeToWidth[conf.parent.type] * pieSize / 2)
-        .height(colTypeToWidth[conf.parent.type] * pieSize + 5)
+        .radius(radius)
+        .innerRadius(radius / 2)
+        .height(colTypeToWidth[conf.parent.type] * circularChartSize + 5)
         .dimension(h.dim)
         .group(h.group)
+        ;
+      return ret;
+    }
+    function sun(v, conf) {
+      if (charts.has(v)) {
+        return charts.get(v);
+      }
+      const dl = dimId(conf);
+      const h = dim(v, conf, d=>d[v].length ? d[v] : ["Never"]);
+      const radius = colTypeToWidth[conf.parent.type] * circularChartSize / 2;
+      console.log('sun', radius);
+      const hideRoot = -radius/4;
+      const ret = dc.sunburstChart("#" + dl + "-dvchart")
+        .radius(radius)
+        .innerRadius(hideRoot + radius / 8)
+        .height(colTypeToWidth[conf.parent.type] * circularChartSize + 5)
+        .width(colTypeToWidth[conf.parent.type] * circularChartSize + 5)
+        .dimension(h.dim)
+        .group(h.group)
+        ;
       return ret;
     }
     function bar(v, conf) {
@@ -237,6 +268,7 @@ var dv = (function(dv) {
     chartsSel.each(function(d) {
       const factories = {
         'pie': pie,
+        'sun': sun,
         'bar-fixed': barFixed,
         'bar': bar,
         'matchups': matchups

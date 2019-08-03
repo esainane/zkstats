@@ -66,22 +66,18 @@
         }
       ]
     },{
-      "type": "thin",
+      "type": "med",
       "charts": [
         {
-          "vis": "pie",
-          "dim": "winner_fac",
-          "dim_pretty": "Winner's First Factory",
+          "vis": "sun",
+          "dim": "winner_fac_prog",
+          "dim_pretty": "Winner's Factory Progression",
           "colors": "fac"
         },{
-          "vis": "pie",
-          "dim": "loser_fac",
-          "dim_pretty": "Loser's First Factory",
+          "vis": "sun",
+          "dim": "loser_fac_prog",
+          "dim_pretty": "Loser's Factory Progression",
           "colors": "fac"
-        },{
-          "vis": "pie",
-          "dim": "mirror_match",
-          "dim_pretty": "Mirror Match"
         }
       ]
     },{
@@ -91,6 +87,10 @@
           "vis": "pie",
           "dim": "map",
           "dim_pretty": "Matchmaking Map Used"
+        },{
+          "vis": "pie",
+          "dim": "mirror_match",
+          "dim_pretty": "Mirror Match"
         },{
           "vis": "pie",
           "dim": "zk_version",

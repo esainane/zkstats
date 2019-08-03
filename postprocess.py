@@ -71,7 +71,7 @@ with open(filename, 'r') as f:
             if p['name'] == '?':
                 d('Skipping spectator...')
                 continue
-            p['facplop'] = None
+            p['facplop'] = []
             teamid_to_player[p['teamid']] = p
             name_to_player[p['name']] = p
             continue
@@ -79,8 +79,7 @@ with open(filename, 'r') as f:
         if m:
             d('Found facplop', repr(m.groupdict()))
             p = teamid_to_player[m.group('teamid')]
-            if not p['facplop']:
-                p['facplop'] = m.group('fac')
+            p['facplop'].append(m.group('fac'))
             continue
         m = winner.match(line)
         if m:
@@ -103,8 +102,10 @@ summary = {}
 summary['winner_elo_lead'] = int(winning_player['elo']) - int(losing_player['elo'])
 summary['winner_elo'] = int(winning_player['elo'])
 summary['loser_elo'] = int(losing_player['elo'])
-summary['winner_fac'] = winning_player['facplop'] or 'Never'
-summary['loser_fac'] = losing_player['facplop'] or 'Never'
+summary['winner_fac'] = winning_player['facplop'][0] if len(winning_player['facplop']) else 'Never'
+summary['winner_fac_prog'] = winning_player['facplop']
+summary['loser_fac'] = losing_player['facplop'][0] if len(losing_player['facplop']) else 'Never'
+summary['loser_fac_prog'] = losing_player['facplop']
 summary['duration'] = int(duration)
 summary['gameid'] = id
 summary['started'] = started

@@ -6527,10 +6527,10 @@ dc.sunburstChart = function (parent, chartGroup) {
                 return d.x1;
             })
             .innerRadius(function (d) {
-                return d.data.path && d.data.path.length === 1 ? _innerRadius : Math.sqrt(d.y0);
+                return _innerRadius + d.y0;
             })
             .outerRadius(function (d) {
-                return Math.sqrt(d.y1);
+                return _innerRadius + d.y1;
             });
     }
 
@@ -6577,7 +6577,7 @@ dc.sunburstChart = function (parent, chartGroup) {
             });
 
         var partition = d3.partition()
-            .size([2 * Math.PI, _radius * _radius]);
+            .size([2 * Math.PI, _radius - _innerRadius]);
 
         partition(hierarchy);
 
