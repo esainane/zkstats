@@ -1,21 +1,28 @@
 var dv = (function(dv) {
   "use strict";
+  /* Coerce our data file before use elsewhere */
   function dataCoerce(data, config) {
     const fac_progression_dch_fixup = a => {
+      /* Strip duplicates */
       a = a.reduce((a,d) => a.includes(d) ? a : (a.push(d), a), []);
+      /* Add terminal node if one is not already present */
       if (a.slice(-1) !== 'Never') {
         a.push('Never');
       }
+      /* Cap to at most three deep */
       return a.slice(0,3);
     };
     for (let match of data) {
+      /* Track mirror match states for use as its own dimension. */
       match.mirror_match = match.winner_fac === match.loser_fac;
 
+      /* Coerce the data in our hierarchical progressions */
       match.winner_fac_prog = fac_progression_dch_fixup(match.winner_fac_prog);
       match.loser_fac_prog = fac_progression_dch_fixup(match.loser_fac_prog);
     }
     return data;
   }
+  /* Coerce our configuration file before use elsewhere */
   function configCoerce(config) {
     for (let column of config.columns) {
       for (let chart of column.charts) {
@@ -24,9 +31,16 @@ var dv = (function(dv) {
     }
     return config;
   }
+  /*
+   * Factory for simple sorting functions.
+   * mapSort(f) returns a function that compares two arguments, l and r after the function f has been applied
+   */
   const mapSort = f => (l,r) => Math.sign(f(l) - f(r));
+  /* dc's default date format is messy. Use the universal ISO format. */
   dc.dateFormat = d3.timeFormat("%Y-%m-%d %H:%M");
+  /* The initialisation function we're exposing in our namespace. Invoke this with the path of the configuration file to use. */
   dv.init = async function(configloc) {
+    /* Fetch our configuration and data, coercing them as we go */
     let globalConfig = await d3.json(configloc);
     let data = await d3.json(globalConfig.src);
     globalConfig = configCoerce(globalConfig);
@@ -34,10 +48,13 @@ var dv = (function(dv) {
     window.data = data;
     const cfdata = crossfilter(data);
     const vis = d3.select("#vis");
+    /* Track which dimensions we've created */
     const heap = window.heap = new Map();
+    /* Returns which symbol we should use to track this dimension. */
     function dimId(conf) {
       return conf.dim.id || conf.dim.toLowerCase();
     }
+    /* Construct a dimension and grouping, given the name, configuration, and a coercion function to apply to each record for this grouping. */
     function dim(v, conf, coerce = i => "" + i[v]) {
       const dl = dimId(conf);
       if (heap.has(dl)) {
@@ -95,9 +112,12 @@ var dv = (function(dv) {
       heap.set(dl, ret);
       return ret;
     }
+    /* Track which charts we've created. */
     const charts = window.charts = new Map();
+    /* Constants for chart construction. */
     const colTypeToWidth = { 'thin': 200, 'med': 400, 'wide': 600 };
     const circularChartSize = 0.8;
+    /* Create dimension, group, and chart in pie format */
     function pie(v, conf) {
       if (charts.has(v)) {
         return charts.get(v);
@@ -114,6 +134,7 @@ var dv = (function(dv) {
         ;
       return ret;
     }
+    /* Create dimension, group, and chart in sunburst format */
     function sun(v, conf) {
       if (charts.has(v)) {
         return charts.get(v);
@@ -133,6 +154,7 @@ var dv = (function(dv) {
         ;
       return ret;
     }
+    /* Create dimension, group, and chart in bar format */
     function bar(v, conf) {
       if (charts.has(v)) {
         return charts.get(v);
@@ -172,6 +194,7 @@ var dv = (function(dv) {
       }
       return ret;
     }
+    /* Create dimension, group, and chart in bar format, with some fixed parameters. */
     function barFixed(v, conf) {
       const c = bar(v, conf).width(200).round(Math.round).centerBar(true);
       let range = [1,2,3,4,5];
@@ -187,6 +210,7 @@ var dv = (function(dv) {
       }
       c.xAxis().tickValues(range).tickFormat(d3.format(",.0f"));
     }
+    /* Create dimension, group, and chart in matchups format, with many hardcoded parameters. Refactor me! */
     function matchups(v, conf) {
       if (charts.has(v)) {
         return charts.get(v);
@@ -237,6 +261,7 @@ var dv = (function(dv) {
       }
       return ret;
     }
+    /* Final processing that is common to all chart factories. */
     function chartPostprocessCommon(ret, v, conf) {
       if (conf.colors) {
         const mapping = globalConfig.colors[conf.colors];
@@ -248,6 +273,9 @@ var dv = (function(dv) {
       charts.set(v, ret);
       return ret;
     }
+    /* Take our configuration file, and start laying out our page according to its specifications. */
+    /* We're interested in creating a column for each column specified, and charts within it according to configuration. */
+    /* For now, we're just creating the columns and containers for the charts. */
     const chartsSel = vis
       .selectAll(".dvcol").data(globalConfig.columns)
         .enter().append("div")
@@ -257,6 +285,7 @@ var dv = (function(dv) {
           .enter().append("div")
           .attr("id", function(d) { return dimId(d) + "-dvchart"; })
           ;
+    /* Add some supporting information for the chart's we're about to add. A title for each chart. A link to clear a chart's filters, and a span that will show the currently active filter, all under an element that will hide when there's no filter. */
     chartsSel.append("h3").text(function(d) { return d.dim_pretty || d.dim; });
     const filterinfoSel = chartsSel.append("p").attr("class", "filterinfo").append("span").attr("class", "reset").attr("style", "display: none");
     filterinfoSel.append('a').attr('class', 'reset').attr('style', 'display: none').attr('href', '#').text('Clear filter:').on('click', d => {
@@ -265,6 +294,7 @@ var dv = (function(dv) {
     });
     filterinfoSel.append('span').attr('class', 'filter');
     chartsSel.selectAll('.info').data(d => d.info ? [d.info] : []).enter().append('p').attr('class', 'info').text(d => d);
+    /* Finally, construct the charts themselves. */
     chartsSel.each(function(d) {
       const factories = {
         'pie': pie,
@@ -275,6 +305,7 @@ var dv = (function(dv) {
       };
       chartPostprocessCommon(factories[d.vis](d.dim, d), d.dim, d);
     });
+    /* Because there's *currently* no other place for it, set classes for extra css processing here. Refactor me! */
     chartsSel.attr('class', function(conf) {
       let extraClasses = '';
       if ('verticalXAxisTicks' in conf) {
@@ -282,6 +313,7 @@ var dv = (function(dv) {
       }
       return 'dc-chart dvchart' + extraClasses;
     });
+    /* Everything has been created. Render them all, and everything else is user interaction. */
     dc.renderAll();
   };
   return dv;
