@@ -30,15 +30,14 @@ var dv = (function(dv) {
     let globalConfig = await d3.json(configloc);
     let data = await d3.json(globalConfig.src);
     globalConfig = configCoerce(globalConfig);
-    function dimId(conf) {
-      return conf.dim.id || conf.dim.toLowerCase();
-    }
     data = dataCoerce(data);
     window.data = data;
     const cfdata = crossfilter(data);
     const vis = d3.select("#vis");
     const heap = window.heap = new Map();
-    let dump = 0;
+    function dimId(conf) {
+      return conf.dim.id || conf.dim.toLowerCase();
+    }
     function dim(v, conf, coerce = i => "" + i[v]) {
       const dl = dimId(conf);
       if (heap.has(dl)) {
