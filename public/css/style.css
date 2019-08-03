@@ -182,6 +182,10 @@ p.filterinfo {
   cursor: help;
 }
 
+.dc-chart .pie-slice {
+  fill: #000;
+}
+
 /* Non-layout critical style niceties */
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
