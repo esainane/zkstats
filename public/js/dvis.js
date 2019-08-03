@@ -129,6 +129,7 @@ var dv = (function(dv) {
         .radius(radius)
         .innerRadius(radius / 2)
         .height(colTypeToWidth[conf.parent.type] * circularChartSize + 5)
+        .width(colTypeToWidth[conf.parent.type])
         .dimension(h.dim)
         .group(h.group)
         ;
@@ -148,7 +149,7 @@ var dv = (function(dv) {
         .radius(radius)
         .innerRadius(hideRoot + radius / 8)
         .height(colTypeToWidth[conf.parent.type] * circularChartSize + 5)
-        .width(colTypeToWidth[conf.parent.type] * circularChartSize + 5)
+        .width(colTypeToWidth[conf.parent.type])
         .dimension(h.dim)
         .group(h.group)
         ;
