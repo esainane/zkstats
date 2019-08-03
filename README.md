@@ -88,7 +88,7 @@ Process automated in the Makefile.
 
 ## Visualisation
 
-This repository contains example data at `public/data/all7.json`, and is configured to find data at `public/data/live.json`. A symbolic link, `public/data/live.example.json` points to this example data. 
+This repository contains example data at `public/data/all.json`, and is configured to find data at `public/data/live.json`. A symbolic link, `public/data/live.example.json` points to this example data. 
 
 To copy this link into the live location, to use the example data:
 
