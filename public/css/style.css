@@ -2,6 +2,9 @@
 html, body, #vis, #main, .side {
   height: 100%;
 }
+html, body {
+  min-width: 1678px;
+}
 body {
   padding: 0;
   margin: 0;
@@ -86,6 +89,10 @@ body {
   width: 200px;
 }
 
+.tiny {
+  width: 70px;
+}
+
 /* Titles */
 h3 {
   font-weight: normal;
@@ -144,6 +151,16 @@ p.filterinfo {
   /* Specify size and block specifically, so that the space needed is always reserved */
   display: block;
   height: 11px;
+}
+
+/* Record display */
+
+.dv-record-container {
+  font: 10px sans-serif;
+  color: #555;
+  margin: .4em;
+  padding: 0;
+  height: 10px;
 }
 
 /* Charts */

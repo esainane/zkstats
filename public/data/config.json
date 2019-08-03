@@ -125,6 +125,29 @@
           "dim_pretty": "Matchups"
         }
       ]
+    },{
+      "type": "tiny",
+      "charts": [
+        {
+          "vis": "count",
+          "dim": "count",
+          "dim_pretty": "Filter"
+        },{
+          "vis": "records",
+          "dim": "gameid",
+          "dim_pretty": "Battles",
+          "count": 30,
+          "columns": [
+            {
+              "label": "",
+              "prop": "gameid",
+              "type": "link",
+              "ref": "<a href='https://zero-k.info/Battles/Detail/{}'>{}</a>"
+            }
+          ],
+          "order": "descending"
+        }
+      ]
     }
   ]
 }

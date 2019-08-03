@@ -115,7 +115,7 @@ var dv = (function(dv) {
     /* Track which charts we've created. */
     const charts = window.charts = new Map();
     /* Constants for chart construction. */
-    const colTypeToWidth = { 'thin': 200, 'med': 400, 'wide': 600 };
+    const colTypeToWidth = { 'tiny':70, 'thin': 200, 'med': 400, 'wide': 600 };
     const circularChartSize = 0.8;
     /* Create dimension, group, and chart in pie format */
     function pie(v, conf) {
@@ -261,6 +261,54 @@ var dv = (function(dv) {
       }
       return ret;
     }
+    /* Create dimension, group, and chart showing record directly */
+    function records(v, conf) {
+      if (charts.has(v)) {
+        return charts.get(v);
+      }
+      const dl = dimId(conf);
+      let type, count, ref;
+      const h = dim(v, conf);
+      const ret = dc.dataTable("#" + dl + "-dvchart")
+        .dimension(h.dim)
+        ;
+      if (conf.count) {
+        ret.size(conf.count);
+      }
+      const cconf = [];
+      for (let c of conf.columns) {
+        const entry = { label: c.label };
+        if (c.type === 'link') {
+          const p = c.prop;
+          const fmt = c.ref;
+          const replaceBraces = new RegExp('{}', 'g');
+          entry.format = d => fmt.replace(replaceBraces, d[p]);
+        }
+        cconf.push(entry);
+      }
+      ret.columns(cconf);
+      if (conf.order === "descending") {
+        ret.order(d3.descending);
+      }
+      return ret;
+    }
+    /* Simple "Chart" that displays how many records are selected. */
+    function count(v, conf) {
+      if (charts.has(v)) {
+        return charts.get(v);
+      }
+      const dl = dimId(conf);
+      const ret = dc.dataCount("#" + dl + "-dvchart")
+        .crossfilter(cfdata)
+        .groupAll(cfdata.groupAll())
+        ;
+      const container = d3.select("#" + dl + "-dvchart").append('span').attr('class','dv-record-container');
+      container.append('span').attr('class', 'filter-count');
+      container.append('span').text('/');
+      container.append('span').attr('class', 'total-count');
+      container.append('span').text('.');
+      return ret;
+    }
     /* Final processing that is common to all chart factories. */
     function chartPostprocessCommon(ret, v, conf) {
       if (conf.colors) {
@@ -301,7 +349,9 @@ var dv = (function(dv) {
         'sun': sun,
         'bar-fixed': barFixed,
         'bar': bar,
-        'matchups': matchups
+        'matchups': matchups,
+        'records': records,
+        'count': count
       };
       chartPostprocessCommon(factories[d.vis](d.dim, d), d.dim, d);
     });
