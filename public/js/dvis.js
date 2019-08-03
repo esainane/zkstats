@@ -143,7 +143,6 @@ var dv = (function(dv) {
       const dl = dimId(conf);
       const h = dim(v, conf, d=>d[v].length ? d[v] : ["Never"]);
       const radius = colTypeToWidth[conf.parent.type] * circularChartSize / 2;
-      console.log('sun', radius);
       const hideRoot = -radius/4;
       const ret = dc.sunburstChart("#" + dl + "-dvchart")
         .radius(radius)
