@@ -249,12 +249,17 @@ var dv = (function(dv) {
         const directOrder = d3.scaleOrdinal().domain(values).range(incrementingRange);
         const reversedValues = values.slice().reverse();
         const reverseOrder = d3.scaleOrdinal().domain(reversedValues).range(incrementingRange);
+        /* Hack out the 'Any' row. XXX: Refactor me! */
+        const rows = reversedValues[0] === 'Any' ? reversedValues.slice(1) : reversedValues;
         ret
           .rowOrdering(mapSort(reverseOrder))
           .colOrdering(mapSort(directOrder))
-          .rows(reversedValues)
+          .rows(rows)
           .cols(values)
           ;
+      }
+      if (conf.show_any) {
+        ret.showAny(true);
       }
       if ('verticalXAxisTicks' in conf) {
         ret.verticalXAxisTicks(true);

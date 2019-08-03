@@ -206,13 +206,43 @@ function matchupChart(parent, chartGroup) {
 
     var _verticalXAxisTicks = false;
 
+    var _showAny = false;
+    _chart.showAny = function(_) {
+        if (!arguments.length) {
+            return _showAny;
+        }
+        _showAny = _;
+        return _chart;
+    };
+
     _chart._doRedraw = function () {
         var data = _chart.data();
+        var vsAny = [], unreflectedData = data;
 
         data = data.reduce((acc, d, i) => _chart.keyAccessor()(d) == _chart.valueAccessor()(d) ? acc : acc.concat([{key: [d.key[1], d.key[0]], value: [d.value[1], d.value[0]] }]), data);
 
         var rows = _chart.rows() || data.map(_chart.valueAccessor()),
             cols = _chart.cols() || data.map(_chart.keyAccessor());
+
+        if (_showAny) {
+            /* Row name -> [wins, picked] */
+            vsAny = rows.reduce((acc, d, i) => (acc[d] = [0,0], acc), []);
+            unreflectedData.forEach(d => {
+                /* If a key won, increase its wins */
+                if (d.value[0]) {
+                    vsAny[d.key[0]][0] += d.value[0];
+                }
+                if (d.value[1]) {
+                    vsAny[d.key[1]][0] += d.value[1];
+                }
+                /* Unconditionally increase picks */
+                vsAny[d.key[0]][1] += d.value[0] + d.value[1];
+                vsAny[d.key[1]][1] += d.value[0] + d.value[1];
+            });
+            data = data.concat(rows.reduce((acc, d, i) =>
+              (acc.push({ key: [ d, 'Any' ], value: [ vsAny[d][0], vsAny[d][1] - vsAny[d][0] ]}), acc),
+            []));
+        }
 
         if (_rowOrdering) {
             rows = rows.sort(_rowOrdering);

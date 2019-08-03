@@ -14,7 +14,8 @@
       "Airplane Plant",
       "Shipyard",
       "Strider Hub",
-      "Never"
+      "Never",
+      "Any"
     ]
   },
   "colors": {
@@ -122,7 +123,8 @@
           },
           "verticalXAxisTicks": true,
           "order": "facorder",
-          "dim_pretty": "Matchups"
+          "dim_pretty": "Matchups",
+          "show_any": "true"
         }
       ]
     },{
