@@ -147,7 +147,7 @@ var dv = (function(dv) {
       const hideRoot = -radius/4;
       const ret = dc.sunburstChart("#" + dl + "-dvchart")
         .radius(radius)
-        .innerRadius(hideRoot + radius / 8)
+        .innerRadius(radius / 8)
         .height(colTypeToWidth[conf.parent.type] * circularChartSize + 5)
         .width(colTypeToWidth[conf.parent.type])
         .dimension(h.dim)
