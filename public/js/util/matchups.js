@@ -287,14 +287,19 @@ function matchupChart(parent, chartGroup) {
             boxes.select('title').text(_chart.title());
         }
 
+        function boxSignificance(d) {
+            return Math.min(1, (d.value[0] + d.value[1] + 20) / 40);
+        }
+        boxes.each(d=>d.significance = boxSignificance(d));
+
         dc.transition(boxes.select('rect'), _chart.transitionDuration(), _chart.transitionDelay())
-            .attr('x', function (d, i) { return cols(_chart.keyAccessor()(d, i)); })
-            .attr('y', function (d, i) { return rows(_chart.valueAccessor()(d, i)); })
+            .attr('x', function (d, i) { return (boxWidth - boxWidth * d.significance) / 2 + cols(_chart.keyAccessor()(d, i)); })
+            .attr('y', function (d, i) { return (boxHeight - boxHeight * d.significance) / 2 + rows(_chart.valueAccessor()(d, i)); })
             .attr('rx', _xBorderRadius)
             .attr('ry', _yBorderRadius)
             .attr('fill', _chart.getColor)
-            .attr('width', boxWidth)
-            .attr('height', boxHeight);
+            .attr('width', d => boxWidth * d.significance)
+            .attr('height', d => boxHeight * d.significance);
 
         var gCols = _chartBody.select('g.cols');
         if (gCols.empty()) {
