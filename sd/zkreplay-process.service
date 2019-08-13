@@ -1,0 +1,52 @@
+[Unit]
+Description=Processes Zero-K replay files
+
+[Service]
+Type=simple
+User=zkreplay
+Group=zkreplay
+
+ExecStart=/usr/bin/make summaries
+WorkingDirectory=/var/lib/zkreplay
+
+# Play nicely with other processes on the system. We're pretty low priority.
+Nice=10
+IOSchedulingPriority=5
+# Emphatically volunteer to be killed if the system runs out of memory, since it's probably going to be springrts' fault
+OOMScoreAdjust=800
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=zkreplay-process
+
+# Sandbox things fairly strictly. We want this to be in a detached network state so not only is springrts unable to accidentally communicate/send stats to the outside world, but temporary network sockets that are opened during processing don't affect the rest of our system.
+
+CapabilityBoundingSet=
+NoNewPrivileges=true
+
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/zkreplay/stats /var/lib/zkreplay/summaries /var/lib/zkreplay/Zero-K
+
+PrivateTmp=true
+PrivateDevices=true
+PrivateNetwork=true
+PrivateUsers=true
+ProtectHostname=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=
+RestrictNamespaces=true
+
+LockPersonality=true
+SystemCallArchitectures=native
+
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+
+PrivateMounts=true
+
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM

@@ -1,0 +1,12 @@
+[Unit]
+Description=Fetch Zero-K replays every two hours
+
+[Timer]
+# Half past the hour, every two hours from midnight local timezone.
+OnCalendar=*-*-* 0/2:30:00
+# Make use of a random delay, so in the unlikely event that lots of people install this we don't effectively DDoS ZK infrastructure.
+# This varies linearly up to ten minutes. An okay connection should be done in half of one.
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=multi-user.target

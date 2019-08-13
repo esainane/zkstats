@@ -1,0 +1,9 @@
+[Unit]
+Description=Process Zero-K replays every two hours
+
+[Timer]
+# On the hour, every two hours from 1am local timezone.
+OnCalendar=*-*-* 1/2:00:00
+
+[Install]
+WantedBy=multi-user.target

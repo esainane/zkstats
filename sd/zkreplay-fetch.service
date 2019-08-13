@@ -1,0 +1,49 @@
+[Unit]
+Description=Download Zero-K replay files and dependencies
+
+[Service]
+Type=simple
+User=zkreplayfetch
+Group=zkreplay
+
+ExecStart=/var/lib/zkreplay/sd/indexrange.sh 0 400
+WorkingDirectory=/var/lib/zkreplay
+
+# Play nicely with other processes on the system. We're pretty low priority.
+Nice=10
+IOSchedulingPriority=5
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=zkreplay-fetch
+
+# Sandbox things moderately. We still need to communicate with the outside world to fetch things.
+
+CapabilityBoundingSet=
+NoNewPrivileges=true
+
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/zkreplay/demos /var/lib/zkreplay/games /var/lib/zkreplay/maps /var/lib/zkreplay/Zero-K
+
+PrivateTmp=true
+PrivateDevices=true
+PrivateUsers=true
+ProtectHostname=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=
+RestrictNamespaces=true
+
+LockPersonality=true
+SystemCallArchitectures=native
+
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+
+PrivateMounts=true
+
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
