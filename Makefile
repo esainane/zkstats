@@ -35,7 +35,7 @@ fetch-replays: $(REPLAYS) $(RDETAILS)
 
 # XXX: Automatic regeneration disabled until we work out how to throttle this
 demos/index.mk.in:
-	seq 0 40 800 | xargs -n1 -d \\n -I {} curl "https://zero-k.info/Battles?Title=MM&Map=&PlayersFrom=2&PlayersTo=2&Age=0&Mission=2&Bots=2&Rank=8&Victory=0&Offset={}" | sed -n "s_^.*<a href='/Battles/Detail/\([0-9]\+\)'.*\$$_\1_p" | paste -d\  -s - | sed 's/^/BATTLEIDS:=/' > demos/index.mk.tmp
+	seq 0 40 800 | xargs -n1 -d \\n -I {} curl -s "https://zero-k.info/Battles?Title=MM&Map=&PlayersFrom=2&PlayersTo=2&Age=0&Mission=2&Bots=2&Rank=8&Victory=0&Offset={}" | sed -n "s_^.*<a href='/Battles/Detail/\([0-9]\+\)'.*\$$_\1_p" | paste -d\  -s - | sed 's/^/BATTLEIDS:=/' > demos/index.mk.tmp
 	mv -f demos/index.mk.tmp demos/index.mk.in
 
 # If we can't find a zero-k.info URL to download a map from, instead look for 'Manual downloads:', and if the next line has a link, use that.
@@ -89,31 +89,31 @@ games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 #	$(LATESTSPRING)/pr-downloader --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
 
 $(ZKDIR)/engine/linux64/%/spring-headless:
-	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetching spring engine version $*" ===; echo; curl "https://springrts.com/dl/buildbot/default/maintenance/$*/linux64/spring_%7bmaintenance%7d$*_minimal-portable-linux64-static.7z" > "$${WORK}/$*.7z" && cd "$(ZKDIR)/engine/linux64" && mkdir "$*" && cd "$*" && 7z x "$${WORK}/$*.7z" && chmod -R o-w . && chmod -R g+rX . ; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
+	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetching spring engine version $*" ===; echo; curl -s "https://springrts.com/dl/buildbot/default/maintenance/$*/linux64/spring_%7bmaintenance%7d$*_minimal-portable-linux64-static.7z" > "$${WORK}/$*.7z" && cd "$(ZKDIR)/engine/linux64" && mkdir "$*" && cd "$*" && 7z x "$${WORK}/$*.7z" && chmod -R o-w . && chmod -R g+rX . ; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
 
 # Download different maps.
 export mapmanualfallback
 maps/%.html:
-	BASE=$$(pwd) && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd maps/ && curl -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1 | xargs -n1 -d \\n curl -O -R; fi || (echo "FAILED getting map ID $*" ; rm -f "$${BASE}/$@" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
+	BASE=$$(pwd) && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd maps/ && curl -s -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1 | xargs -n1 -d \\n curl -s -O -R; fi || (echo "FAILED getting map ID $*" ; rm -f "$${BASE}/$@" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
 
 # Finally, link replays to the Zero-K version, engine version, and map that it depends on.
 -include $(EVENTDEPS)
 
 demos/%/detail.html:
-	mkdir -p "$(dir $@)" && cd "$(dir $@)" && curl "https://zero-k.info/Battles/Detail/$*" > detail.html
+	mkdir -p "$(dir $@)" && cd "$(dir $@)" && curl -s "https://zero-k.info/Battles/Detail/$*" > detail.html
 
 # replay.sdfz is a symlink to the full replay with a more accessible name
 # This recipe downloads the replay file as part of the process
 demos/%/replay.sdfz: | demos/%/detail.html
 	# Scrape the battle detail page for the "Manual download" replay link, extract it, urlencode the filename, reconstruct the full URL, download it, then symlink replay.sdfz to the result
-	mkdir -p "$(dir $@)" && cd "$(dir $@)" && cat "detail.html" | sed -n "s_^.*<a href='/replays/\(.*\.sdfz\)'>Manual download</a>.*\$$_\1_p" | tr -d \\n | jq -sRr @uri | sed 's_^.*$$_https://zero-k.info/replays/&_' | xargs -n1 -d \\n curl -O -R && ls -1t *.sdfz | grep -vx replay.sdfz | head -1 | xargs -n1 -d \\n -I{} ln -sf {} replay.sdfz
+	mkdir -p "$(dir $@)" && cd "$(dir $@)" && cat "detail.html" | sed -n "s_^.*<a href='/replays/\(.*\.sdfz\)'>Manual download</a>.*\$$_\1_p" | tr -d \\n | jq -sRr @uri | sed 's_^.*$$_https://zero-k.info/replays/&_' | xargs -n1 -d \\n curl -s -O -R && ls -1t *.sdfz | grep -vx replay.sdfz | head -1 | xargs -n1 -d \\n -I{} ln -sf {} replay.sdfz
 
 
 # Process the replay
 stats/%/spring.log stats/%/events.log: demos/%/replay.sdfz
 	mkdir -p "$(dir $@)"
 	mkdir -p "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/"
-	set -o pipefail && WORK=$$(mktemp -d) && trap 'rm -rf "$${WORK}"' EXIT && SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && cat "$(ZKDIR)/springsettings.cfg" <(echo ZKHeadlessReplay=$*) > "$${WORK}/springsettings.$*.cfg" && /usr/bin/time -v "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless" -write-dir "$(ZKDIR)" -config "$${WORK}/springsettings.$*.cfg" $< 2>&1 | tee stats/$*/spring.log
+	set -o pipefail && WORK=$$(mktemp -d) && trap 'rm -rf "$${WORK}"' EXIT && SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && cat "$(ZKDIR)/springsettings.cfg" <(echo ZKHeadlessReplay=$*) > "$${WORK}/springsettings.$*.cfg" && /usr/bin/time -v "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless" -write-dir "$(ZKDIR)" -config "$${WORK}/springsettings.$*.cfg" $< 2>&1 > stats/$*/spring.log
 	test -e "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/events.log" && mv -f "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/events.log" "stats/$*/events.log"
 
 # Postprocess the events from the replay
