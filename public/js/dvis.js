@@ -12,15 +12,20 @@ var dv = (function(dv) {
       /* Cap to at most three deep */
       return a.slice(0,3);
     };
+    const ret = [];
     for (let match of data) {
+      if (match.skip) {
+        continue;
+      }
       /* Track mirror match states for use as its own dimension. */
       match.mirror_match = match.winner_fac === match.loser_fac;
 
       /* Coerce the data in our hierarchical progressions */
       match.winner_fac_prog = fac_progression_dch_fixup(match.winner_fac_prog);
       match.loser_fac_prog = fac_progression_dch_fixup(match.loser_fac_prog);
+      ret.push(match);
     }
-    return data;
+    return ret;
   }
   /* Coerce our configuration file before use elsewhere */
   function configCoerce(config) {

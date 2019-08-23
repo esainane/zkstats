@@ -16,6 +16,7 @@ name_to_player = {}
 
 playerinfo = re.compile(r'\[(?:0|1)\] (?P<name>.*), team: (?P<teamid>[0-9]+), elo:(?P<elo>[0-9]+)')
 facplop = re.compile(r'\[(?P<frame>[0-9]+)\] Event \[(?P<location>[^\]]+)\]: (?P<teamid>[0-9]+) finished unit (?P<fac>Cloakbot Factory|Shieldbot Factory|Rover Assembly|Hovercraft Platform|Gunship Plant|Airplane Plant|Spider Factory|Jumpbot Factory|Tank Foundry|Amphbot Factory|Shipyard|Strider Hub)')
+draw = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: The game ended in a draw!')
 winner = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: (?P<name>.*) wins!')
 statsheader = re.compile(r'\[(?P<frame>[0-9]+)\] Game End Stats Header: ')
 
@@ -25,6 +26,7 @@ battlemap = None
 started = None
 sp = None
 zk = None
+skip = False
 
 def d(*args, **kwargs):
     print(file=stderr, *args, **kwargs)
@@ -86,12 +88,20 @@ with open(filename, 'r') as f:
             duration = m.group('frame')
             win = m.group('name')
             continue
+        m = draw.match(line)
+        if m:
+            skip = True
+            break
         if win is None:
             continue
         m = statsheader.match(line)
         if m:
             break
         d('Uh oh, something\'s gone wrong - winner not followed by stats header!')
+
+if skip:
+    print(json.dumps({'skip': True}))
+    exit(0)
 
 winning_player = name_to_player[win]
 losing_player = [p for p in name_to_player.values() if p['name'] != win][0]
