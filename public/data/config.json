@@ -110,7 +110,7 @@
           "dim": "started",
           "dates": true,
           "elasticX": true,
-          "group": "Hour6",
+          "group": "Day",
           "dim_pretty": "Match start time",
           "verticalXAxisTicks": true
         },{
