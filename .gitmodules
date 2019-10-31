@@ -1,0 +1,3 @@
+[submodule "public/js/dc"]
+	path = public/js/dc
+	url = https://github.com/esainane/dc.js
