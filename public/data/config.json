@@ -90,6 +90,10 @@
           "dim_pretty": "Matchmaking Map Used"
         },{
           "vis": "pie",
+          "dim": "map_type",
+          "dim_pretty": "Matchmaking Map Type"
+        },{
+          "vis": "pie",
           "dim": "mirror_match",
           "dim_pretty": "Mirror Match"
         },{

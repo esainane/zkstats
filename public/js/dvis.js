@@ -1,7 +1,7 @@
 var dv = (function(dv) {
   "use strict";
   /* Coerce our data file before use elsewhere */
-  function dataCoerce(data, config) {
+  function dataCoerce(data, config, mapTypes) {
     const fac_progression_dch_fixup = a => {
       /* Strip duplicates */
       a = a.reduce((a,d) => a.includes(d) ? a : (a.push(d), a), []);
@@ -19,6 +19,11 @@ var dv = (function(dv) {
       }
       /* Track mirror match states for use as its own dimension. */
       match.mirror_match = match.winner_fac === match.loser_fac;
+      if (match.map in mapTypes) {
+        match.map_type = mapTypes[match.map];
+      } else {
+        match.map_type = 'Unknown';
+      }
 
       /* Coerce the data in our hierarchical progressions */
       match.winner_fac_prog = fac_progression_dch_fixup(match.winner_fac_prog);
@@ -48,8 +53,9 @@ var dv = (function(dv) {
     /* Fetch our configuration and data, coercing them as we go */
     let globalConfig = await d3.json(configloc);
     let data = await d3.json(globalConfig.src);
+    let mapTypes = await d3.json("data/map-types.json");
     globalConfig = configCoerce(globalConfig);
-    data = dataCoerce(data);
+    data = dataCoerce(data, globalConfig, mapTypes);
     window.data = data;
     const cfdata = crossfilter(data);
     const vis = d3.select("#vis");
