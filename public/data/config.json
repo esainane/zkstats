@@ -84,6 +84,16 @@
           "dim": "loser_fac3",
           "dim_pretty": "Loser's Third Factory",
           "colors": "fac"
+        },{
+          "vis": "pie",
+          "dim": "loser_fac4",
+          "dim_pretty": "Loser's Fourth Factory",
+          "colors": "fac"
+        },{
+          "vis": "pie",
+          "dim": "loser_fac5",
+          "dim_pretty": "Loser's Fifth Factory",
+          "colors": "fac"
         }
       ]
     },{
@@ -103,6 +113,16 @@
           "vis": "pie",
           "dim": "winner_fac3",
           "dim_pretty": "Winner's Third Factory",
+          "colors": "fac"
+        },{
+          "vis": "pie",
+          "dim": "winner_fac4",
+          "dim_pretty": "Winner's Fourth Factory",
+          "colors": "fac"
+        },{
+          "vis": "pie",
+          "dim": "winner_fac5",
+          "dim_pretty": "Winner's Fifth Factory",
           "colors": "fac"
         }
       ]

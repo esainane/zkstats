@@ -1,5 +1,7 @@
 var dv = (function(dv) {
   "use strict";
+  /* Cap factory progression depth */
+  const fac_progression_max = 5;
   /* Coerce our data file before use elsewhere */
   function dataCoerce(data, config, mapTypes) {
     const fac_progression_dch_fixup = a => {
@@ -9,8 +11,7 @@ var dv = (function(dv) {
       if (a.slice(-1) !== 'Never') {
         a.push('Never');
       }
-      /* Cap to at most three deep */
-      return a.slice(0,3);
+      return a.slice(0,fac_progression_max);
     };
     const ret = [];
     for (let match of data) {
@@ -28,7 +29,7 @@ var dv = (function(dv) {
       /* Coerce the data in our hierarchical progressions */
       for (let player of ["winner", "loser"]) {
         match[player + "_fac_prog"] = fac_progression_dch_fixup(match[player + "_fac_prog"]);
-        for (let depth of [0,1,2]) {
+        for (let depth = 0; depth < fac_progression_max; ++depth) {
           match[player + "_fac" + (depth + 1)] = match[player + "_fac_prog"][depth] || "Never";
         }
       }
