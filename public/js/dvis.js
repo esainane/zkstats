@@ -26,8 +26,12 @@ var dv = (function(dv) {
       }
 
       /* Coerce the data in our hierarchical progressions */
-      match.winner_fac_prog = fac_progression_dch_fixup(match.winner_fac_prog);
-      match.loser_fac_prog = fac_progression_dch_fixup(match.loser_fac_prog);
+      for (let player of ["winner", "loser"]) {
+        match[player + "_fac_prog"] = fac_progression_dch_fixup(match[player + "_fac_prog"]);
+        for (let depth of [0,1,2]) {
+          match[player + "_fac" + (depth + 1)] = match[player + "_fac_prog"][depth] || "Never";
+        }
+      }
       ret.push(match);
     }
     return ret;

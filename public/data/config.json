@@ -67,17 +67,42 @@
         }
       ]
     },{
-      "type": "med",
+      "type": "thin",
       "charts": [
         {
-          "vis": "sun",
-          "dim": "winner_fac_prog",
-          "dim_pretty": "Winner's Factory Progression",
+          "vis": "pie",
+          "dim": "loser_fac1",
+          "dim_pretty": "Loser's First Factory",
           "colors": "fac"
         },{
-          "vis": "sun",
-          "dim": "loser_fac_prog",
-          "dim_pretty": "Loser's Factory Progression",
+          "vis": "pie",
+          "dim": "loser_fac2",
+          "dim_pretty": "Loser's Second Factory",
+          "colors": "fac"
+        },{
+          "vis": "pie",
+          "dim": "loser_fac3",
+          "dim_pretty": "Loser's Third Factory",
+          "colors": "fac"
+        }
+      ]
+    },{
+      "type": "thin",
+      "charts": [
+        {
+          "vis": "pie",
+          "dim": "winner_fac1",
+          "dim_pretty": "Winner's First Factory",
+          "colors": "fac"
+        },{
+          "vis": "pie",
+          "dim": "winner_fac2",
+          "dim_pretty": "Winner's Second Factory",
+          "colors": "fac"
+        },{
+          "vis": "pie",
+          "dim": "winner_fac3",
+          "dim_pretty": "Winner's Third Factory",
           "colors": "fac"
         }
       ]
