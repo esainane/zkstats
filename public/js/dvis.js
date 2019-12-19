@@ -68,7 +68,7 @@ var dv = (function(dv) {
     const heap = window.heap = new Map();
     /* Returns which symbol we should use to track this dimension. */
     function dimId(conf) {
-      return conf.dim.id || conf.dim.toLowerCase();
+      return (conf.dim.id || conf.dim).toLowerCase();
     }
     /* Construct a dimension and grouping, given the name, configuration, and a coercion function to apply to each record for this grouping. */
     function dim(v, conf, coerce = i => "" + i[v]) {
@@ -340,7 +340,7 @@ var dv = (function(dv) {
       ret
         .transitionDuration(500)
         ;
-      charts.set(v, ret);
+      charts.set(dimId(conf), ret);
       return ret;
     }
     /* Take our configuration file, and start laying out our page according to its specifications. */
@@ -375,7 +375,7 @@ var dv = (function(dv) {
         'records': records,
         'count': count
       };
-      chartPostprocessCommon(factories[d.vis](d.dim, d), d.dim, d);
+      chartPostprocessCommon(factories[d.vis](dimId(d), d), d.dim, d);
     });
     /* Because there's *currently* no other place for it, set classes for extra css processing here. Refactor me! */
     chartsSel.attr('class', function(conf) {
