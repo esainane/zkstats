@@ -215,6 +215,15 @@ function matchupChart(parent, chartGroup) {
         return _chart;
     };
 
+    var _sizeByPopularity = false;
+    _chart.sizeByPopularity = function(_) {
+        if (!arguments.length) {
+            return _sizeByPopularity;
+        }
+        _sizeByPopularity = _;
+        return _chart;
+    };
+
     _chart._doRedraw = function () {
         var data = _chart.data();
         var vsAny = [], unreflectedData = data;
@@ -224,21 +233,21 @@ function matchupChart(parent, chartGroup) {
         var rows = _chart.rows() || data.map(_chart.valueAccessor()),
             cols = _chart.cols() || data.map(_chart.keyAccessor());
 
+        /* Row name -> [wins, picked] */
+        vsAny = rows.reduce((acc, d, i) => (acc[d] = [0,0], acc), []);
+        unreflectedData.forEach(d => {
+            /* If a key won, increase its wins */
+            if (d.value[0]) {
+                vsAny[d.key[0]][0] += d.value[0];
+            }
+            if (d.value[1]) {
+                vsAny[d.key[1]][0] += d.value[1];
+            }
+            /* Unconditionally increase picks */
+            vsAny[d.key[0]][1] += d.value[0] + d.value[1];
+            vsAny[d.key[1]][1] += d.value[0] + d.value[1];
+        });
         if (_showAny) {
-            /* Row name -> [wins, picked] */
-            vsAny = rows.reduce((acc, d, i) => (acc[d] = [0,0], acc), []);
-            unreflectedData.forEach(d => {
-                /* If a key won, increase its wins */
-                if (d.value[0]) {
-                    vsAny[d.key[0]][0] += d.value[0];
-                }
-                if (d.value[1]) {
-                    vsAny[d.key[1]][0] += d.value[1];
-                }
-                /* Unconditionally increase picks */
-                vsAny[d.key[0]][1] += d.value[0] + d.value[1];
-                vsAny[d.key[1]][1] += d.value[0] + d.value[1];
-            });
             data = data.concat(rows.reduce((acc, d, i) =>
               (acc.push({ key: [ d, 'Any' ], value: [ vsAny[d][0], vsAny[d][1] - vsAny[d][0] ]}), acc),
             []));
@@ -251,16 +260,79 @@ function matchupChart(parent, chartGroup) {
             cols = cols.sort(_colOrdering);
         }
 
-        rows = _rowScale.domain(rows);
-        cols = _colScale.domain(cols);
+        var rowCount,
+            colCount,
+            boxWidth,
+            boxHeight;
 
-        var rowCount = rows.domain().length,
-            colCount = cols.domain().length,
-            boxWidth = Math.floor(_chart.effectiveWidth() / colCount),
-            boxHeight = Math.floor(_chart.effectiveHeight() / rowCount);
+        const colRange = [0, _chart.effectiveWidth()];
+        const rowRange = [_chart.effectiveHeight(), 0];
 
-        cols.rangeRound([0, _chart.effectiveWidth()]);
-        rows.rangeRound([_chart.effectiveHeight(), 0]);
+        if (_sizeByPopularity) {
+            const process = (domain, range) => {
+                let acc = 0;
+                const startpointsData = [];
+                const sizesData = [];
+                const startpoints = d3.scaleOrdinal();
+                const sizes = d3.scaleOrdinal();
+                let anyIndex;
+                const startpointAtEnd = range[0] > range[1];
+                domain.forEach((d,i) => {
+                    if (!startpointAtEnd) {
+                        startpointsData.push(acc);
+                    }
+                    if (_showAny && d == 'Any') {
+                        anyIndex = i;
+                        sizesData.push(0);
+                    } else {
+                        if (!(d in vsAny)) {
+                            console.log(d, 'not in vsAny');
+                        }
+                        const weight = 5 + vsAny[d][1];
+                        acc += weight;
+                        sizesData.push(weight);
+                    }
+                    if (startpointAtEnd) {
+                        startpointsData.push(acc);
+                    }
+                });
+                if (anyIndex !== undefined) {
+                    const anySize = acc / domain.length;
+                    sizesData[anyIndex] = anySize;
+                    acc += anySize;
+                }
+                const ascendingRange = range.slice().sort();
+                //console.log('fitting cumulative weights of', acc, 'into', ascendingRange);
+                const weightingsToTarget = d3.scaleLinear([0, acc], range);
+                const weightingsToTargetAscending = d3.scaleLinear([0, acc], ascendingRange);
+                startpoints
+                    .domain(domain)
+                    .range(startpointsData.map(d => { return weightingsToTarget(d); }));
+                sizes
+                    .domain(domain)
+                    .range(sizesData.map(d => weightingsToTargetAscending(d)));
+                /*domain.forEach(d => { console.log(d, ', weight', '=>', startpoints(d), '+', sizes(d)); });*/
+                return [startpoints, sizes];
+            };
+            [rows,boxHeight] = process(rows, rowRange);
+            //let boxHeightReal = boxHeight;
+            //boxHeight = d => { const ret = boxHeightReal(d); /*console.log('bH', d, ret);*/ if (typeof(d) !== 'string') { throw new Error('Invalid type!'); } return ret; };
+            [cols,boxWidth] = process(cols, colRange);
+            //let boxWidthReal = boxWidth;
+            //boxWidth = d => { const ret = boxWidthReal(d); /*console.log('bW', d, ret);*/ if (typeof(d) !== 'string') { throw new Error('Invalid type!'); } return ret; };
+
+        } else {
+            rows = d3.scaleBand().domain(rows);
+            cols = d3.scaleBand().domain(cols);
+
+            rowCount = rows.domain().length;
+            colCount = cols.domain().length;
+            boxWidth = () => Math.floor(_chart.effectiveWidth() / colCount);
+            boxHeight = () => Math.floor(_chart.effectiveHeight() / rowCount);
+
+            cols.rangeRound(colRange);
+            rows.rangeRound(rowRange);
+        }
 
         var boxes = _chartBody.selectAll('g.box-group').data(data, function (d, i) {
             const k ='' + [_chart.keyAccessor()(d, i) , _chart.valueAccessor()(d, i)];
@@ -293,13 +365,13 @@ function matchupChart(parent, chartGroup) {
         boxes.each(d=>d.significance = boxSignificance(d));
 
         dc.transition(boxes.select('rect'), _chart.transitionDuration(), _chart.transitionDelay())
-            .attr('x', function (d, i) { return (boxWidth - boxWidth * d.significance) / 2 + cols(_chart.keyAccessor()(d, i)); })
-            .attr('y', function (d, i) { return (boxHeight - boxHeight * d.significance) / 2 + rows(_chart.valueAccessor()(d, i)); })
+            .attr('x', function (d, i) { const w = boxWidth(_chart.keyAccessor()(d, i)); return (w - w * d.significance) / 2 + cols(_chart.keyAccessor()(d, i)); })
+            .attr('y', function (d, i) { const h = boxHeight(_chart.valueAccessor()(d, i)); return (h - h * d.significance) / 2 + rows(_chart.valueAccessor()(d, i)); })
             .attr('rx', _xBorderRadius)
             .attr('ry', _yBorderRadius)
             .attr('fill', _chart.getColor)
-            .attr('width', d => boxWidth * d.significance)
-            .attr('height', d => boxHeight * d.significance);
+            .attr('width', (d,i) => boxWidth(_chart.keyAccessor()(d, i)) * d.significance)
+            .attr('height', (d,i) => boxHeight(_chart.valueAccessor()(d, i)) * d.significance);
 
         var gCols = _chartBody.select('g.cols');
         if (gCols.empty()) {
@@ -313,7 +385,7 @@ function matchupChart(parent, chartGroup) {
             .enter()
                 .append('text')
                 .attr('x', function (d) {
-                    return cols(d) + boxWidth / 2;
+                    return cols(d) + boxWidth(d) / 2;
                 })
                 .style('text-anchor', _verticalXAxisTicks ? 'end' : 'middle')
                 .attr('y', _chart.effectiveHeight())
@@ -321,14 +393,14 @@ function matchupChart(parent, chartGroup) {
                 .on('click', _chart.xAxisOnClick())
                 .text(_chart.colsLabel());
         if (_verticalXAxisTicks) {
-            gColsText = gColsText.attr('transform', d => 'rotate(-90,' + (cols(d) + boxWidth / 2) + "," + _chart.effectiveHeight() + ')');
+            gColsText = gColsText.attr('transform', d => 'rotate(-90,' + (cols(d) + boxWidth(d) / 2) + "," + _chart.effectiveHeight() + ')');
         }
         gColsText
             .merge(gColsText);
 
         dc.transition(gColsText, _chart.transitionDuration(), _chart.transitionDelay())
                .text(_chart.colsLabel())
-               .attr('x', function (d) { return cols(d) + boxWidth / 2; })
+               .attr('x', function (d) { return cols(d) + boxWidth(d) / 2; })
                .attr('y', _chart.effectiveHeight());
 
         var gRows = _chartBody.select('g.rows');
@@ -348,7 +420,7 @@ function matchupChart(parent, chartGroup) {
                 .attr('dx', -2)
                 .attr('y', function (d) {
                     // console.log('row y', rows(d));
-                    return rows(d) + boxHeight / 2; })
+                    return rows(d) + boxHeight(d) / 2; })
                 .attr('dy', 6)
                 .on('click', _chart.yAxisOnClick())
                 .text(_chart.rowsLabel())
@@ -356,7 +428,7 @@ function matchupChart(parent, chartGroup) {
 
         dc.transition(gRowsText, _chart.transitionDuration(), _chart.transitionDelay())
               .text(_chart.rowsLabel())
-              .attr('y', function (d) { return rows(d) + boxHeight / 2; });
+              .attr('y', function (d) { return rows(d) + boxHeight(d) / 2; });
 
         if (_chart.hasFilter()) {
             _chart.selectAll('g.box-group').each(function (d) {
