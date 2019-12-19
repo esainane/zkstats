@@ -274,6 +274,10 @@ var dv = (function(dv) {
           .rows(rows)
           .cols(values)
           ;
+        if (conf.size_by_popularity) {
+          const enable = conf.size_by_popularity.toLowerCase() !== "false";
+          ret.sizeByPopularity(enable);
+        }
       }
       if (conf.show_any) {
         ret.showAny(true);

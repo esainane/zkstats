@@ -173,7 +173,8 @@
           "verticalXAxisTicks": true,
           "order": "facorder",
           "dim_pretty": "Matchups",
-          "show_any": "true"
+          "show_any": "true",
+          "size_by_popularity": "true"
         }
       ]
     },{
