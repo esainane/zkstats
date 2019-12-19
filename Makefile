@@ -35,7 +35,7 @@ fetch-replays: $(REPLAYS) $(RDETAILS)
 
 # XXX: Automatic regeneration disabled until we work out how to throttle this
 demos/index.mk.in:
-	seq 0 40 800 | xargs -n1 -d \\n -I {} curl -s "https://zero-k.info/Battles?Title=MM&Map=&PlayersFrom=2&PlayersTo=2&Age=0&Mission=2&Bots=2&Rank=8&Victory=0&Offset={}" | sed -n "s_^.*<a href='/Battles/Detail/\([0-9]\+\)'.*\$$_\1_p" | paste -d\  -s - | sed 's/^/BATTLEIDS:=/' > demos/index.mk.tmp
+	seq 0 40 800 | xargs -n1 -d \\n -I {} curl -s "https://zero-k.info/Battles?Title=MM+&Map=&PlayersFrom=2&PlayersTo=2&Age=0&Mission=2&Bots=2&Rank=8&Victory=0&Offset={}" | sed -n "s_^.*<a href='/Battles/Detail/\([0-9]\+\)'.*\$$_\1_p" | paste -d\  -s - | sed 's/^/BATTLEIDS:=/' > demos/index.mk.tmp
 	mv -f demos/index.mk.tmp demos/index.mk.in
 
 # If we can't find a zero-k.info URL to download a map from, instead look for 'Manual downloads:', and if the next line has a link, use that.
