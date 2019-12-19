@@ -381,27 +381,34 @@ function matchupChart(parent, chartGroup) {
 
         gColsText.exit().remove();
 
-        gColsText = gColsText
+        let gColsTextE = gColsText
             .enter()
                 .append('text')
                 .attr('x', function (d) {
-                    return cols(d) + boxWidth(d) / 2;
+                    return Math.round(cols(d) + boxWidth(d) / 2);
                 })
                 .style('text-anchor', _verticalXAxisTicks ? 'end' : 'middle')
                 .attr('y', _chart.effectiveHeight())
-                .attr('dy', 12)
+                .attr('dy', _verticalXAxisTicks ? 6 : 12)
+                .attr('text-rendering', 'optimizeLegibility')
                 .on('click', _chart.xAxisOnClick())
                 .text(_chart.colsLabel());
         if (_verticalXAxisTicks) {
-            gColsText = gColsText.attr('transform', d => 'rotate(-90,' + (cols(d) + boxWidth(d) / 2) + "," + _chart.effectiveHeight() + ')');
+            gColsTextE = gColsTextE
+                .attr('transform', d => 'rotate(-90,' + Math.round(cols(d) + boxWidth(d) / 2) + "," + Math.round(_chart.effectiveHeight()) + ')');
         }
-        gColsText
+        gColsText = gColsTextE
             .merge(gColsText);
 
-        dc.transition(gColsText, _chart.transitionDuration(), _chart.transitionDelay())
-               .text(_chart.colsLabel())
-               .attr('x', function (d) { return cols(d) + boxWidth(d) / 2; })
-               .attr('y', _chart.effectiveHeight());
+        const colTransition = dc.transition(gColsText, _chart.transitionDuration(), _chart.transitionDelay())
+                .text(_chart.colsLabel())
+                .attr('x', d => Math.round(cols(d) + boxWidth(d) / 2))
+                .attr('y', _chart.effectiveHeight());
+
+        if (_verticalXAxisTicks) {
+            colTransition
+                .attr('transform', d => 'rotate(-90,' + (Math.round(cols(d) + boxWidth(d) / 2)) + "," + Math.round(_chart.effectiveHeight()) + ')');
+        }
 
         var gRows = _chartBody.select('g.rows');
         if (gRows.empty()) {
