@@ -123,5 +123,5 @@ summaries/%/summary.json: stats/%/events.log postprocess.py
 	mv -f "$@".tmp "$@"
 
 summaries/all.json: $(SUMMARIES)
-	( echo -n [ && cat $^ | paste -s -d, - && echo -n ] ) > "$@.tmp"
+	( echo -n [ && cat summaries/*/summary.json | paste -s -d, - && echo -n ] ) > "$@.tmp"
 	mv -f --backup=numbered "$@.tmp" "$@"
