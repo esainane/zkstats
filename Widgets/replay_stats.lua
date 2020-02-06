@@ -103,7 +103,7 @@ end
 -- Print player information at startup. Simplified from start_boxes.lua gadget
 --
 
-local PLAYERINFO_CUSTOMKEYS = 10
+local PLAYERINFO_CUSTOMKEYS = Spring.GetGameRulesParam("GetPlayerInfoCustomKeysIndex") or 10
 
 -- name, elo, clanShort, clanLong, isAI
 local function GetPlayerInfo (teamID)
