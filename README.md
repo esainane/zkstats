@@ -19,7 +19,6 @@ Concatenate all the json together into one omnibus file at `/var/lib/zkreplay/su
 Initial setup as the superuser:
 
 ```bash
-apt install jq
 adduser --system --home /var/lib/zkreplay --no-create-home --group zkreplay
 adduser --system --home /var/lib/zkreplay/demos --no-create-home --ingroup zkreplay zkreplayfetch
 mkdir /var/lib/zkreplay
