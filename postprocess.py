@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+import math
 import re
 from sys import argv, stderr, exit
 
@@ -103,8 +104,54 @@ if skip:
     print(json.dumps({'skip': True}))
     exit(0)
 
-winning_player = name_to_player[win]
-losing_player = [p for p in name_to_player.values() if p['name'] != win][0]
+def player_data_by_winning(name_to_player, win):
+    winning_player = name_to_player[win]
+    losing_player = [p for p in name_to_player.values() if p['name'] != win][0]
+    return winning_player, losing_player
+
+def truncate_if_numeric(v, truncate_to_bits=24):
+    """
+    Truncates a value as if coerced through a float.
+
+    If v looks like a number, returns a string comprising that number
+    truncated to truncate_to_bits of precision, as if stored lossily in a
+    floating point with that many bits available.
+
+    Only performs mantissa truncation - simulating running out of space for
+    the exponent is not supported.
+    """
+    try:
+        i = int(v)
+    except ValueError:
+        return v
+    bitlen = math.ceil(math.log(i,2))
+    shift = bitlen - truncate_to_bits
+    return str(i + (1 << shift - 1) >> shift << shift)
+
+def player_data_maps(name_to_player):
+    """
+    Yields candidate player data maps in order.
+
+    This begins with the map straight, and tries workarounds in sequence if failing.
+    """
+    yield name_to_player
+    # Try to work around Spring being eager to convert numeric-looking strings
+    # to numbers in RuleParams, such as storage for player names, potentially
+    # losing precision (yes, really - see Battle 855246 >_<;; )
+    yield { truncate_if_numeric(k):v for k,v in name_to_player.items() }
+
+winning_player, losing_player = None,None
+err = None
+for m in player_data_maps(name_to_player):
+    try:
+        d('Trying',repr(m))
+        winning_player, losing_player = player_data_by_winning(m, win)
+    except KeyError as e:
+        err = e
+        continue
+    break
+else:
+    raise err
 
 d('teamid', winning_player['teamid'], 'wins')
 
