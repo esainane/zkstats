@@ -11,6 +11,14 @@ SHELL:=/bin/bash
 
 # XXX: Assumes that ZKDIR contains exactly one hyphen, and that the spring version is separated by another hyphen.
 LATESTSPRING:=$(shell ls -1d $(ZKDIR)/engine/linux64/* | sort --key=1,2d --key=3n --field-separator=- | tail -1)
+ifndef PRDOWNLOADER
+ifeq ($(LATESTSPRING),104.0.1-1477-g8ecf38a)
+# Workaround for 104.0.1-1477-g8ecf38a's pr-downloader failing to --download-game
+PRDOWNLOADER:=$(ZKDIR)/engine/linux64/104.0.1-1435-g79d77ca/pr-downloader
+else
+PRDOWNLOADER:=$(LATESTSPRING)/pr-downloader
+endif
+endif
 
 -include demos/index.mk
 # BATTLEIDS is the set of battle IDs that we can get from the index
@@ -76,17 +84,17 @@ demos/%/events.log.deps: demos/%/detail.html
 
 # Index for rapid downloader.
 $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz:
-	$(LATESTSPRING)/pr-downloader --filesystem-writepath "$(ZKDIR)"
+	$(PRDOWNLOADER) --filesystem-writepath "$(ZKDIR)"
 
 # Download different Zero-K versions.
 games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 	mkdir -p games
-	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | grep '^zk:git:' | cut -f2 -d, ) && echo && echo "Downloading "$*" hash $${ZKHASH}..." && echo && $(LATESTSPRING)/pr-downloader --download-game "$*" --filesystem-writepath "$(ZKDIR)" && test -e "$(ZKDIR)/packages/$${ZKHASH}.sdp" && ln -sf "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
+	ZKHASH=$$(zgrep -F "$*" "$(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz" | grep '^zk:git:' | cut -f2 -d, ) && echo && echo "Downloading "$*" hash $${ZKHASH}..." && echo && $(PRDOWNLOADER) --download-game "$*" --filesystem-writepath "$(ZKDIR)" && test -e "$(ZKDIR)/packages/$${ZKHASH}.sdp" && ln -sf "$(ZKDIR)/packages/$${ZKHASH}.sdp" "$@"
 
 # Download different springrts versions.
 # pr-downloader variant reverted until it can be reworked to fit the zk directory structure?
 #$(ZKDIR)/engine/linux64/%/spring-headless:
-#	$(LATESTSPRING)/pr-downloader --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
+#	$(PRDOWNLOADER) --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
 
 $(ZKDIR)/engine/linux64/%/spring-headless:
 	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetching spring engine version $*" ===; echo; curl -s "https://springrts.com/dl/buildbot/default/maintenance/$*/linux64/spring_%7bmaintenance%7d$*_minimal-portable-linux64-static.7z" > "$${WORK}/$*.7z" && cd "$(ZKDIR)/engine/linux64" && mkdir "$*" && cd "$*" && 7z x "$${WORK}/$*.7z" && chmod -R o-w . && chmod -R g+rX . ; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
