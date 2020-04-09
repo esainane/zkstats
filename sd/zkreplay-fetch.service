@@ -6,7 +6,7 @@ Type=simple
 User=zkreplayfetch
 Group=zkreplay
 
-ExecStart=/var/lib/zkreplay/sd/indexrange.sh 0 400
+ExecStart=/var/lib/zkreplay/sd/indexrange.sh 0 600
 WorkingDirectory=/var/lib/zkreplay
 
 # Play nicely with other processes on the system. We're pretty low priority.
