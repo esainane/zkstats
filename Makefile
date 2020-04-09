@@ -15,7 +15,7 @@ LATESTSPRING:=$(shell ls -1d $(ZKDIR)/engine/linux64/* | sort --key=1,2d --key=3
 -include demos/index.mk
 # BATTLEIDS is the set of battle IDs that we can get from the index
 # ALLBATTLEIDS is BATTLEIDS, plus what we already have locally.
-ALLBATTLEIDS:=$(BATTLEIDS) $(shell find demos -mindepth 1 -type d | xargs -n1 basename)
+ALLBATTLEIDS:=$(BATTLEIDS) $(shell find demos -mindepth 1 -type d | sed 's_^.*/\([^\/*]\)_\1_')
 REPLAYS:=$(addprefix demos/,$(addsuffix /replay.sdfz, $(ALLBATTLEIDS)))
 RDETAILS:=$(addprefix demos/,$(addsuffix /detail.html, $(ALLBATTLEIDS)))
 EVENTS:=$(addprefix stats/,$(addsuffix /events.log, $(ALLBATTLEIDS)))
