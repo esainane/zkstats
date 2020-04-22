@@ -12,12 +12,12 @@ SHELL:=/bin/bash
 # XXX: Assumes that ZKDIR contains exactly one hyphen, and that the spring version is separated by another hyphen.
 LATESTSPRING:=$(shell ls -1d $(ZKDIR)/engine/linux64/* | sort --key=1,2d --key=3n --field-separator=- | tail -1)
 ifndef PRDOWNLOADER
-ifeq ($(LATESTSPRING),104.0.1-1477-g8ecf38a)
+#ifeq ($(LATESTSPRING),104.0.1-1477-g8ecf38a)
 # Workaround for 104.0.1-1477-g8ecf38a's pr-downloader failing to --download-game
 PRDOWNLOADER:=$(ZKDIR)/engine/linux64/104.0.1-1435-g79d77ca/pr-downloader
-else
-PRDOWNLOADER:=$(LATESTSPRING)/pr-downloader
-endif
+#else
+#PRDOWNLOADER:=$(LATESTSPRING)/pr-downloader
+#endif
 endif
 
 -include demos/index.mk
