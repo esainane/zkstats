@@ -1,0 +1,9 @@
+[Unit]
+Description=Make public status of zkreplay-process
+
+[Timer]
+# Every 30s
+OnCalendar=*-*-* *:*:00/30
+
+[Install]
+WantedBy=multi-user.target
