@@ -109,16 +109,22 @@ local PLAYERINFO_CUSTOMKEYS = Spring.GetGameRulesParam("GetPlayerInfoCustomKeysI
 local function GetPlayerInfo (teamID)
 	local _,playerID,_,isAI = Spring.GetTeamInfo(teamID, false)
 
-	if isAI then
-		return select(2, Spring.GetAIInfo(teamID)), -1000, "", "", true
-	end
-
 	local name = Spring.GetPlayerInfo(playerID, false) or "?"
 	local customKeys = select(PLAYERINFO_CUSTOMKEYS, Spring.GetPlayerInfo(playerID)) or {}
 	local clanShort = customKeys.clan     or ""
 	local clanLong  = customKeys.clanfull or ""
 	local elo       = customKeys.elo      or "0"
-	log(name .. ", team: " .. teamID .. ", elo:" .. elo)
+	line = name .. ", team: " .. teamID .. ", elo:" .. elo
+	if isAI then
+		line = line .. ', ai: ' .. select(2, Spring.GetAIInfo(teamID))
+	end
+
+	log(line)
+
+	if isAI then
+		Spring.Echo(name .. ' team:' .. teamID .. ', elo: ', elo .. ' (AI)')
+		return select(2, Spring.GetAIInfo(teamID)), -1000, "", "", true
+	end
 	return name, tonumber(elo), clanShort, clanLong, false
 end
 

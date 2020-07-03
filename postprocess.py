@@ -15,7 +15,7 @@ timestamp = re.compile(r"a href='/replays/(?P<year>[0-9]{4})(?P<month>[0-9]{2})(
 teamid_to_player = {}
 name_to_player = {}
 
-playerinfo = re.compile(r'\[(?:0|1)\] (?P<name>.*), team: (?P<teamid>[0-9]+), elo:(?P<elo>[0-9]+)')
+playerinfo = re.compile(r'\[(?:0|1)\] (?P<name>.*), team: (?P<teamid>[0-9]+), elo:(?P<elo>[0-9]+)(?: , ai: (?P<ai>.*))?')
 facplop = re.compile(r'\[(?P<frame>[0-9]+)\] Event \[(?P<location>[^\]]+)\]: (?P<teamid>[0-9]+) finished unit (?P<fac>Cloakbot Factory|Shieldbot Factory|Rover Assembly|Hovercraft Platform|Gunship Plant|Airplane Plant|Spider Factory|Jumpbot Factory|Tank Foundry|Amphbot Factory|Shipyard|Strider Hub)')
 draw = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: The game ended in a draw!')
 winner = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: (?P<name>.*) wins!')
