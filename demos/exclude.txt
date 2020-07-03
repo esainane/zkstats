@@ -1,9 +1,9 @@
-836420
-865339
-876763
-876478
-875010
-889737
-891491
-904065
-908659
+836420 Unknown bug - end of demo reached after two and a third hours without game over
+865339 Desyncs
+876763 ZKI put both players on the same team
+876478 OOM
+875010 OOM
+889737 ZKI did not save the replay (out of disk space?), actually an empty file
+891491 Desync, LuaRules errors
+904065 One player used AI from game start
+908659 Hangs at end, does not autoquit
