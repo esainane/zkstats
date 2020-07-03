@@ -5,5 +5,4 @@
 875010 OOM
 889737 ZKI did not save the replay (out of disk space?), actually an empty file
 891491 Desync, LuaRules errors
-904065 One player used AI from game start
 908659 Hangs at end, does not autoquit
