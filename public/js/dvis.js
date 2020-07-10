@@ -1,5 +1,7 @@
 var dv = (function(dv) {
   "use strict";
+  const hash = window.location.hash;
+  const local = hash.substring(hash.indexOf('#')+1).split('|');
   /* Cap factory progression depth */
   const fac_progression_max = 5;
   /* Coerce our data file before use elsewhere */
@@ -277,6 +279,9 @@ var dv = (function(dv) {
         if (conf.size_by_popularity) {
           const enable = conf.size_by_popularity;
           ret.sizeByPopularity(enable);
+        }
+        if (local.includes("popularity")) {
+          ret.sizeByPopularity(true);
         }
       }
       if (conf.show_any) {
