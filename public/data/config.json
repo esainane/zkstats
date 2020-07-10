@@ -174,7 +174,7 @@
           "order": "facorder",
           "dim_pretty": "Matchups",
           "show_any": "true",
-          "size_by_popularity": "false"
+          "size_by_popularity": false
         }
       ]
     },{

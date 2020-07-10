@@ -275,7 +275,7 @@ var dv = (function(dv) {
           .cols(values)
           ;
         if (conf.size_by_popularity) {
-          const enable = conf.size_by_popularity.toLowerCase() !== "false";
+          const enable = conf.size_by_popularity;
           ret.sizeByPopularity(enable);
         }
       }
