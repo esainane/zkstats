@@ -12,6 +12,8 @@ WorkingDirectory=/var/lib/zkreplay
 # Play nicely with other processes on the system. We're pretty low priority.
 Nice=10
 IOSchedulingPriority=5
+MemoryHigh=4096M
+MemoryMax=4608M
 # Emphatically volunteer to be killed if the system runs out of memory, since it's probably going to be springrts' fault
 OOMScoreAdjust=800
 
