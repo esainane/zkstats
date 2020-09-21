@@ -6,3 +6,4 @@
 889737 ZKI did not save the replay (out of disk space?), actually an empty file
 891491 Desync, LuaRules errors
 908659 Hangs at end, does not autoquit
+953624 Empty demofile
