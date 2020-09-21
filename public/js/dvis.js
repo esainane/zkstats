@@ -37,6 +37,13 @@ var dv = (function(dv) {
       }
       ret.push(match);
     }
+    if (local.includes("logtime")) {
+      const durationChart = config.columns[0].charts[3];
+      durationChart.logarithmic = true;
+      durationChart.elasticX = false;
+      durationChart.group = 900; /* Half a minute */
+      durationChart.dim_pretty = "Game Time (Log Frames)";
+    }
     return ret;
   }
   /* Coerce our configuration file before use elsewhere */
@@ -47,6 +54,25 @@ var dv = (function(dv) {
       }
     }
     return config;
+  }
+  function framesToDuration(d) {
+    d = d / 30;
+    const components = [];
+    if (d > 3600) {
+      const hours = Math.floor(d / 3600);
+      components.push(`${hours} hour${hours > 1 ? 's' : ''}`);
+      d -= hours * 3600;
+    }
+    if (d > 60) {
+      const minutes = Math.floor(d / 60);
+      components.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+      d -= minutes * 60;
+    }
+    if (d > 0) {
+      const seconds = Math.floor(d);
+      components.push(`${seconds} second${seconds > 1 ? 's' : ''}`);
+    }
+    return components.join(", ");
   }
   /*
    * Factory for simple sorting functions.
@@ -193,7 +219,17 @@ var dv = (function(dv) {
         }
       } else {
         const lowest_value = coerce(h.dim.bottom(1)[0]);
-        xScale = d3.scaleLinear().domain([lowest_value < 0 ? lowest_value : 0, coerce(h.dim.top(1)[0]) + (conf.group || 1)]);
+        let lower_bound;
+        const upper_bound = coerce(h.dim.top(1)[0]) + (conf.group ? conf.group * 2 : 1);
+        if (conf.logarithmic) {
+          xScale = d3.scaleLog();
+          lower_bound = Math.max(900, lowest_value);
+          window.dbglog = xScale;
+        } else {
+          xScale = d3.scaleLinear();
+          lower_bound = Math.min(0, lowest_value);
+        }
+        xScale.domain([lower_bound, upper_bound]);
       }
       const ret = dc.barChart("#" + dl + "-dvchart")
         .margins({left: 60, right: 18, top: 5, bottom: 60})
@@ -207,6 +243,9 @@ var dv = (function(dv) {
         .group(h.group)
         .x(xScale)
         .barWidthMultiplier((conf.dates ? '1' : conf.group) || 1);
+      if (dl == "duration") {
+        ret.filterPrinter(d => d.map(d => `[${d.map(framesToDuration).join(" -> ")}]`));
+      }
       if ('elasticX' in conf) {
         ret.elasticX(conf.elasticX);
       }
