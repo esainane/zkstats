@@ -7,3 +7,7 @@
 891491 Desync, LuaRules errors
 908659 Hangs at end, does not autoquit
 953624 Empty demofile
+988521 Unavailable engine
+988522 Unavailable engine
+988526 Unavailable engine
+994805 Hangs - TODO investigate why
