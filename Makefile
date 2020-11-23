@@ -20,6 +20,7 @@ PRDOWNLOADER:=$(ZKDIR)/engine/linux64/104.0.1-1435-g79d77ca/pr-downloader
 #endif
 endif
 
+# Demos/index.mk is a rolling list of the most recent Battle IDs. If zkstats is not run frequently enough, some may be missed!
 -include demos/index.mk
 # BATTLEIDS is the set of battle IDs that we can get from the index
 # ALLBATTLEIDS is BATTLEIDS, plus what we already have locally.
@@ -130,5 +131,6 @@ summaries/%/summary.json: stats/%/events.log postprocess.py
 	mv -f "$@".tmp "$@"
 
 summaries/all.json: $(SUMMARIES)
-	( echo -n [ && cat summaries/*/summary.json | paste -s -d, - && echo -n ] ) > "$@.tmp"
+	test -f archive.json.frags || touch archive.json.frags
+	( echo -n [ && cat archive.json.frags summaries/*/summary.json | paste -s -d, - && echo -n ] ) > "$@.tmp"
 	mv -f --backup=numbered "$@.tmp" "$@"

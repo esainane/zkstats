@@ -7,3 +7,5 @@ summaries/
 *~
 *.bak
 public/data/live.json
+archive
+archive.json.frags

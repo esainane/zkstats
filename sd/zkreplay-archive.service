@@ -1,35 +1,33 @@
 [Unit]
-Description=Process Zero-K replay files
+Description=Archive Zero-K replay files
 After=zkreplay-fetch.service
+After=zkreplay-process.service
 
 [Service]
 Type=simple
 User=zkreplay
 Group=zkreplay
 
-ExecStart=/usr/bin/make summaries
+ExecStart=/var/lib/zkreplay/sd/archive.sh
 WorkingDirectory=/var/lib/zkreplay
 
 # Play nicely with other processes on the system. We're pretty low priority.
 Nice=10
 IOSchedulingPriority=5
-MemoryHigh=4096M
-MemoryMax=4608M
-# Emphatically volunteer to be killed if the system runs out of memory, since it's probably going to be springrts' fault
 OOMScoreAdjust=800
 
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=zkreplay-process
+SyslogIdentifier=zkreplay-archive
 
-# Sandbox things fairly strictly. We want this to be in a detached network state so not only is springrts unable to accidentally communicate/send stats to the outside world, but temporary network sockets that are opened during processing don't affect the rest of our system.
+# Sandbox things fairly strictly.
 
 CapabilityBoundingSet=
 NoNewPrivileges=true
 
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/zkreplay/stats /var/lib/zkreplay/summaries /var/lib/zkreplay/Zero-K
+ReadWritePaths=/var/lib/zkreplay/demos /var/lib/zkreplay/stats /var/lib/zkreplay/summaries /varlib/zkreplay/archives /var/lib/zkreplay/archives.json.frags
 
 PrivateTmp=true
 PrivateDevices=true
