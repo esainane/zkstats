@@ -11,7 +11,7 @@ main() {
     done < <(seq "$start" 40 "$end") | grep -vxFf demos/exclude.txt | paste -d\  -s - | sed 's/^/BATTLEIDS:=/' > demos/index.mk.tmp
     mv -f demos/index.mk.tmp demos/index.mk.in
     mv -f demos/index.mk.in demos/index.mk
-    make demos || make demos # Fetching a new game version sometimes fails the first time. FIXME!
+    make -Rr demos || make -Rr demos # Fetching a new game version sometimes fails the first time. FIXME!
 }
 
 if [ $# -lt 2 ]; then

@@ -1,4 +1,4 @@
-#!/usr/bin/env make -R
+#!/usr/bin/env make -rR
 # Expects to be in /var/lib/zkreplay
 
 default:
