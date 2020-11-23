@@ -37,7 +37,7 @@ var dv = (function(dv) {
       }
       ret.push(match);
     }
-    if (local.includes("logtime")) {
+    if (true || local.includes("logtime")) {
       const durationChart = config.columns[0].charts[3];
       durationChart.logarithmic = true;
       durationChart.elasticX = false;
