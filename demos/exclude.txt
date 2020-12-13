@@ -11,3 +11,11 @@
 988522 Unavailable engine
 988526 Unavailable engine
 994805 Hangs - TODO investigate why
+994770 Desyncs. EGB block START.
+994712 Desyncs
+994708 Desyncs. Suspicious as fuck, apocalyptic achievement award in a six minute game? Seriously?
+994702 Desyncs, though runs to completion
+994696 Desyncs. Suspicious as fuck, apocalyptic achiemvent award in an eight minute game. On *Wanderlust*.
+994690 Desyncs. Runs to completion against EGB, but EGB is still reported as the winner from ZKI's perspective.
+994356 Desyncs. EGB block END.
+993234 Not actually a MM game
