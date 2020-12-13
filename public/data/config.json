@@ -44,19 +44,22 @@
           "dim": "winner_elo_lead",
           "group": 100,
           "elasticX": true,
-          "dim_pretty": "Winner's ELO Advantage"
+          "dim_pretty": "Winner's ELO Advantage",
+          "verticalXAxisTicks": true
         },{
           "vis": "bar",
           "dim": "winner_elo",
           "group": 100,
           "elasticX": true,
-          "dim_pretty": "Winner's ELO Rating"
+          "dim_pretty": "Winner's ELO Rating",
+          "verticalXAxisTicks": true
         },{
           "vis": "bar",
           "dim": "loser_elo",
           "group": 100,
           "elasticX": true,
-          "dim_pretty": "Loser's ELO Rating"
+          "dim_pretty": "Loser's ELO Rating",
+          "verticalXAxisTicks": true
         },{
           "vis": "bar",
           "dim": "duration",
