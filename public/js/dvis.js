@@ -338,7 +338,7 @@ var dv = (function(dv) {
       }
       const dl = dimId(conf);
       let type, count, ref;
-      const h = dim(v, conf);
+      const h = dim(v, conf, d=>d[v]);
       const ret = dc.dataTable("#" + dl + "-dvchart")
         .dimension(h.dim)
         ;
