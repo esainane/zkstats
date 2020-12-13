@@ -94,7 +94,7 @@ games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 #	$(PRDOWNLOADER) --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
 
 $(ZKDIR)/engine/linux64/%/spring-headless:
-	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetching spring engine version $*" ===; echo; curl -s "https://springrts.com/dl/buildbot/default/maintenance/$*/linux64/spring_%7bmaintenance%7d$*_minimal-portable-linux64-static.7z" > "$${WORK}/$*.7z" && cd "$(ZKDIR)/engine/linux64" && mkdir "$*" && cd "$*" && 7z x "$${WORK}/$*.7z" && chmod -R o-w . && chmod -R g+rX . ; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
+	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetch spring engine version $*" ===; echo; curl -s "https://zero-k.info/engine/linux64/$*.zip" > "$${WORK}/$*.zip" && cd "$(ZKDIR)/engine/linux64" && mkdir -p "$*" && cd "$*" && unzip "$${WORK}/$*.zip" && chmod -R o-w . && chmod -R g+rX . ; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
 
 # Download different maps.
 export mapmanualfallback
