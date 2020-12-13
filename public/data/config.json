@@ -162,7 +162,7 @@
           "dim": "started",
           "dates": true,
           "elasticX": true,
-          "group": "Day",
+          "group": "Week",
           "dim_pretty": "Match start time",
           "verticalXAxisTicks": true
         },{
