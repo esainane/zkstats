@@ -37,13 +37,6 @@ var dv = (function(dv) {
       }
       ret.push(match);
     }
-    if (true || local.includes("logtime")) {
-      const durationChart = config.columns[0].charts[3];
-      durationChart.logarithmic = true;
-      durationChart.elasticX = false;
-      durationChart.group = 900; /* Half a minute */
-      durationChart.dim_pretty = "Game Time (Log Frames)";
-    }
     return ret;
   }
   /* Coerce our configuration file before use elsewhere */

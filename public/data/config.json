@@ -63,9 +63,10 @@
         },{
           "vis": "bar",
           "dim": "duration",
-          "group": 5000,
-          "elasticX": true,
-          "dim_pretty": "Game Time (Frames)",
+          "group": 900,
+          "logarithmic": true,
+          "elasticX": false,
+          "dim_pretty": "Game Time (Log Frames)",
           "verticalXAxisTicks": true
         }
       ]
