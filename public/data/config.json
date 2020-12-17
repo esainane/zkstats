@@ -152,7 +152,8 @@
         },{
           "vis": "pie",
           "dim": "spring_version",
-          "dim_pretty": "Spring RTS Version"
+          "dim_pretty": "Spring RTS Version",
+          "when": "springver"
         }
       ]
     },{

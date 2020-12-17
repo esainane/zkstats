@@ -392,7 +392,7 @@ var dv = (function(dv) {
         .enter().append("div")
         .attr("class", function(d) { return (d.type ? d.type + " side " : "") + "vcol"; })
         .attr("id", function(d) { return d.type ? null : "main"; })
-        .selectAll(".dvchart").data(function(d) { return d.charts; })
+        .selectAll(".dvchart").data(function(d) { return d.charts.reduce((a,c)=>{(!c.when||local.includes(c.when))&&a.push(c);return a;},[]); })
           .enter().append("div")
           .attr("id", function(d) { return dimId(d) + "-dvchart"; })
           ;
