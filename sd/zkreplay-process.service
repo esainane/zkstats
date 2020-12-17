@@ -29,7 +29,7 @@ NoNewPrivileges=true
 
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/zkreplay/stats /var/lib/zkreplay/summaries /var/lib/zkreplay/Zero-K
+ReadWritePaths=/var/lib/zkreplay/stats /var/lib/zkreplay/summaries /var/lib/zkreplay/Zero-K /var/lib/zkreplay/archive.json.frags
 
 PrivateTmp=true
 PrivateDevices=true
