@@ -78,10 +78,11 @@ var dv = (function(dv) {
   dv.init = async function(configloc) {
     /* Fetch our configuration and data, coercing them as we go */
     let globalConfig = await d3.json(configloc);
-    let data = await d3.json(globalConfig.src);
-    let mapTypes = await d3.json("data/map-types.json");
+    let [data, mapTypes] = await Promise.all([d3.json(globalConfig.src), d3.json("data/map-types.json")]);
+
     globalConfig = configCoerce(globalConfig);
     data = dataCoerce(data, globalConfig, mapTypes);
+
     window.data = data;
     const cfdata = crossfilter(data);
     const vis = d3.select("#vis");
