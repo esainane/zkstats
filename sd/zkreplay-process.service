@@ -7,7 +7,7 @@ Type=simple
 User=zkreplay
 Group=zkreplay
 
-ExecStart=/usr/bin/make summaries
+ExecStart=/usr/bin/make -k summaries
 WorkingDirectory=/var/lib/zkreplay
 
 # Play nicely with other processes on the system. We're pretty low priority.
