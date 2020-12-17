@@ -4,8 +4,35 @@ var dv = (function(dv) {
   const local = hash.substring(hash.indexOf('#')+1).split('|');
   /* Cap factory progression depth */
   const fac_progression_max = 5;
+  function assignWhr(match, fullWhrByMatch) {
+    const whrdata = fullWhrByMatch[match.gameid];
+    if (whrdata) {
+      const [winner_whrdata, loser_whrdata] = [whrdata[match.winner_userid], whrdata[match.loser_userid]];
+      if (winner_whrdata && loser_whrdata) {
+        match.has_fullwhr = "Available";
+        match.winner_whr = winner_whrdata.rating;
+        match.winner_whr_stdev = winner_whrdata.stdev;
+        match.loser_whr = loser_whrdata.rating;
+        match.loser_whr_stdev = loser_whrdata.stdev;
+        match.winner_whr_lead = match.winner_whr - match.loser_whr;
+        return;
+      } else {
+        match.has_fullwhr = "UserID mismatch";
+      }
+    } else {
+      match.has_fullwhr = "No data";
+    }
+    match.winner_whr = match.winner_elo;
+    match.loser_whr = match.loser_elo;
+    /*
+     * We have no "best approximation" here.
+     * Stdev will be completely nonsensical when matches without full whr information are not excluded.
+     */
+    match.winner_whr_stdev = match.loser_whr_stdev = 80;
+    match.winner_whr_lead = match.winner_whr - match.loser_whr;
+  }
   /* Coerce our data file before use elsewhere */
-  function dataCoerce(data, config, mapTypes) {
+  function dataCoerce(data, config, mapTypes, fullWhr) {
     const fac_progression_dch_fixup = a => {
       /* Strip duplicates */
       a = a.reduce((a,d) => a.includes(d) ? a : (a.push(d), a), []);
@@ -15,11 +42,25 @@ var dv = (function(dv) {
       }
       return a.slice(0,fac_progression_max);
     };
+    const fullWhrByMatch = {};
+    if (local.includes("fullwhr")) {
+      for (let match of fullWhr) {
+        const whrByPlayer = {};
+        for (let player of match.players) {
+          whrByPlayer[player.accountId] = player;
+        }
+        fullWhrByMatch[match.id] = whrByPlayer;
+      }
+    }
     const ret = [];
     for (let match of data) {
       if (match.skip) {
         continue;
       }
+      if (local.includes("fullwhr")) {
+        assignWhr(match, fullWhrByMatch);
+      }
+
       /* Track mirror match states for use as its own dimension. */
       match.mirror_match = match.winner_fac === match.loser_fac;
       if (match.map in mapTypes) {
@@ -78,10 +119,10 @@ var dv = (function(dv) {
   dv.init = async function(configloc) {
     /* Fetch our configuration and data, coercing them as we go */
     let globalConfig = await d3.json(configloc);
-    let [data, mapTypes] = await Promise.all([d3.json(globalConfig.src), d3.json("data/map-types.json")]);
+    let [data, mapTypes, fullWhr] = await Promise.all([d3.json(globalConfig.src), d3.json("data/map-types.json"), local.includes("fullwhr") ? d3.json("data/fullwhr.json") : Promise.resolve([])]);
 
     globalConfig = configCoerce(globalConfig);
-    data = dataCoerce(data, globalConfig, mapTypes);
+    data = dataCoerce(data, globalConfig, mapTypes, fullWhr);
 
     window.data = data;
     const cfdata = crossfilter(data);

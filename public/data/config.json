@@ -48,10 +48,26 @@
           "verticalXAxisTicks": true
         },{
           "vis": "bar",
+          "dim": "winner_whr",
+          "group": 100,
+          "elasticX": true,
+          "dim_pretty": "Winner's WHR Rating",
+          "when": "fullwhr",
+          "verticalXAxisTicks": true
+        },{
+          "vis": "bar",
           "dim": "winner_elo",
           "group": 100,
           "elasticX": true,
           "dim_pretty": "Winner's ELO Rating",
+          "verticalXAxisTicks": true
+        },{
+          "vis": "bar",
+          "dim": "loser_whr",
+          "group": 100,
+          "elasticX": true,
+          "dim_pretty": "Loser's WHR Rating",
+          "when": "fullwhr",
           "verticalXAxisTicks": true
         },{
           "vis": "bar",
@@ -149,6 +165,11 @@
           "vis": "pie",
           "dim": "zk_version",
           "dim_pretty": "Zero-K Version"
+        },{
+          "vis": "pie",
+          "dim": "has_fullwhr",
+          "dim_pretty": "Full WHR Availability",
+          "when": "fullwhr"
         },{
           "vis": "pie",
           "dim": "spring_version",
