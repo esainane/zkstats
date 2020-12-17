@@ -115,6 +115,9 @@ local function GetPlayerInfo (teamID)
 	local clanLong  = customKeys.clanfull or ""
 	local elo       = customKeys.elo      or "0"
 	line = name .. ", team: " .. teamID .. ", elo:" .. elo
+	if customKeys.lobbyid then
+		line = line .. ', userid: ' .. customKeys.lobbyid
+	end
 	if isAI then
 		line = line .. ', ai: ' .. select(2, Spring.GetAIInfo(teamID))
 	end
