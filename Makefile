@@ -8,6 +8,7 @@ default:
 ZKDIR:=/var/lib/zkreplay/Zero-K
 
 SHELL:=/bin/bash
+MAXSIMTIME=8h
 
 # XXX: Assumes that ZKDIR contains exactly one hyphen, and that the spring version is separated by another hyphen.
 LATESTSPRING:=$(shell ls -1d $(ZKDIR)/engine/linux64/* | sort --key=1,2d --key=3n --field-separator=- | tail -1)
@@ -117,11 +118,12 @@ demos/%/replay.sdfz: | demos/%/detail.html
 	sleep 0.2
 
 
+
 # Process the replay
 stats/%/spring.log stats/%/events.log: demos/%/replay.sdfz
 	mkdir -p "$(dir $@)"
 	mkdir -p "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/"
-	set -o pipefail && WORK=$$(mktemp -d) && trap 'rm -rf "$${WORK}"' EXIT && SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && cat "$(ZKDIR)/springsettings.cfg" <(echo ZKHeadlessReplay=$*) > "$${WORK}/springsettings.$*.cfg" && /usr/bin/time -v "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless" -write-dir "$(ZKDIR)" -config "$${WORK}/springsettings.$*.cfg" $< 2>&1 > stats/$*/spring.log
+	set -o pipefail && WORK=$$(mktemp -d) && trap 'rm -rf "$${WORK}"' EXIT && SPRINGVERSION=$$(sed -n "$${getspringversion}" demos/$*/detail.html) && cat "$(ZKDIR)/springsettings.cfg" <(echo ZKHeadlessReplay=$*) > "$${WORK}/springsettings.$*.cfg" && /usr/bin/timeout -k 30s "$(MAXSIMTIME)" /usr/bin/time -v "$(ZKDIR)/engine/linux64/$${SPRINGVERSION}/spring-headless" -write-dir "$(ZKDIR)" -config "$${WORK}/springsettings.$*.cfg" $< 2>&1 > stats/$*/spring.log; CODE=$$? && if [ "$$CODE" -eq 127 -o "$$CODE" -eq 137 ]; then printf "%d (Automatic) Timeout reached, replay skipped. Added %s\n" "$*" "$$(date --iso-8601)" >> demos/exclude.txt; fi; exit "$$CODE"
 	test -e "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/events.log" && mv -f "$(ZKDIR)/LuaUI/Logs/replay_stats/$*/events.log" "stats/$*/events.log"
 
 # Postprocess the events from the replay
