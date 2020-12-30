@@ -41,6 +41,14 @@
       "charts": [
         {
           "vis": "bar",
+          "dim": "winner_whr_lead",
+          "group": 100,
+          "elasticX": true,
+          "dim_pretty": "Winner's WHR Advantage",
+          "when": "fullwhr",
+          "verticalXAxisTicks": true
+        },{
+          "vis": "bar",
           "dim": "winner_elo_lead",
           "group": 100,
           "elasticX": true,
