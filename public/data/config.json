@@ -84,14 +84,6 @@
           "elasticX": true,
           "dim_pretty": "Loser's ELO Rating",
           "verticalXAxisTicks": true
-        },{
-          "vis": "bar",
-          "dim": "duration",
-          "group": 900,
-          "logarithmic": true,
-          "elasticX": false,
-          "dim_pretty": "Game Time (Log Frames)",
-          "verticalXAxisTicks": true
         }
       ]
     },{
@@ -195,6 +187,14 @@
           "elasticX": true,
           "group": "Week",
           "dim_pretty": "Match start time",
+          "verticalXAxisTicks": true
+        },{
+          "vis": "bar",
+          "dim": "duration",
+          "group": 900,
+          "logarithmic": true,
+          "elasticX": false,
+          "dim_pretty": "Game Time (Frames, Logarithmic)",
           "verticalXAxisTicks": true
         },{
           "vis": "matchups",
