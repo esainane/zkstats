@@ -1,3 +1,4 @@
+800802 Not actually matchmaking
 836420 Unknown bug - end of demo reached after two and a third hours without game over
 865339 Desyncs
 876763 ZKI put both players on the same team
@@ -10,6 +11,11 @@
 988521 Unavailable engine
 988522 Unavailable engine
 988526 Unavailable engine
+988772 Not actually matchmaking
+989297 Not actually matchmaking
+991597 Not actually matchmaking
+993251 Not actually matchmaking
+993319 Not actually matchmaking
 994805 Hangs - TODO investigate why
 994770 Desyncs. EGB block START.
 994712 Desyncs
@@ -19,3 +25,6 @@
 994690 Desyncs. Runs to completion against EGB, but EGB is still reported as the winner from ZKI's perspective.
 994356 Desyncs. EGB block END.
 993234 Not actually a MM game
+1005839 Not actually matchmaking
+1005844 Not actually matchmaking
+1005854 Not actually matchmaking
