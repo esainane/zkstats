@@ -9,26 +9,45 @@ var dv = (function(dv) {
     if (whrdata) {
       const [winner_whrdata, loser_whrdata] = [whrdata[match.winner_userid], whrdata[match.loser_userid]];
       if (winner_whrdata && loser_whrdata) {
-        match.has_fullwhr = "Available";
-        match.winner_whr = winner_whrdata.rating;
-        match.winner_whr_stdev = winner_whrdata.stdev;
-        match.loser_whr = loser_whrdata.rating;
-        match.loser_whr_stdev = loser_whrdata.stdev;
-        match.winner_whr_lead = match.winner_whr - match.loser_whr;
-        return;
+        if (winner_whrdata.rating && loser_whrdata.rating) {
+          match.has_fullwhr = "Available";
+          match.winner_whr = winner_whrdata.rating;
+          match.winner_whr_stdev = winner_whrdata.stdev;
+          match.loser_whr = loser_whrdata.rating;
+          match.loser_whr_stdev = loser_whrdata.stdev;
+          match.winner_whr_lead = match.winner_whr - match.loser_whr;
+          return;
+        } else {
+          match.has_fullwhr = "Server-sourced null";
+          if (winner_whrdata.rating) {
+            match.winner_whr = winner_whrdata.rating;
+            match.winner_whr_stdev = winner_whrdata.stdev;
+          } else if (loser_whrdata.rating) {
+            match.loser_whr = loser_whrdata.rating;
+            match.loser_whr_stdev = loser_whrdata.stdev;
+          }
+        }
       } else {
         match.has_fullwhr = "UserID mismatch";
       }
     } else {
       match.has_fullwhr = "No data";
     }
-    match.winner_whr = match.winner_elo;
-    match.loser_whr = match.loser_elo;
     /*
-     * We have no "best approximation" here.
-     * Stdev will be completely nonsensical when matches without full whr information are not excluded.
+     * Try to fill entries with the best values we can provide.
+     * For meaningful results, the user should always filter by "Available" in WHR Availability.
+     * This means, for whr, we set the value to the rating calculated at the time of the match.
+     * We have no "best approximation" for stdev.
+     * Stdev will be completely nonsensical whenever matches without full whr information are not excluded.
      */
-    match.winner_whr_stdev = match.loser_whr_stdev = 80;
+    if (!match.winner_whr) {
+      match.winner_whr = match.winner_elo;
+      match.winner_whr_stdev = 80;
+    }
+    if (!match.loser_whr) {
+      match.loser_whr = match.loser_elo;
+      match.loser_whr_stdev = 80;
+    }
     match.winner_whr_lead = match.winner_whr - match.loser_whr;
   }
   /* Coerce our data file before use elsewhere */
