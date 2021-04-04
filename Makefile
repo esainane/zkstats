@@ -8,7 +8,7 @@ default:
 ZKDIR:=/var/lib/zkreplay/Zero-K
 
 SHELL:=/bin/bash
-MAXSIMTIME=8h
+MAXSIMTIME=4h
 
 # XXX: Assumes that ZKDIR contains exactly one hyphen, and that the spring version is separated by another hyphen.
 LATESTSPRING:=$(shell ls -1d $(ZKDIR)/engine/linux64/* | sort --key=1,2d --key=3n --field-separator=- | tail -1)
