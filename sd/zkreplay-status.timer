@@ -2,8 +2,8 @@
 Description=Make public status of zkreplay-process
 
 [Timer]
-# Every 2m
-OnCalendar=*-*-* *:0/2:00
+# Every 10m
+OnCalendar=*-*-* *:0/10:00
 
 [Install]
 WantedBy=multi-user.target
