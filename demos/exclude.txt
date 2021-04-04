@@ -28,3 +28,42 @@
 1005839 Not actually matchmaking
 1005844 Not actually matchmaking
 1005854 Not actually matchmaking
+1019474 Dead-end page ZKI side
+1019494 Dead-end page ZKI side
+1021577 Dead-end page ZKI side
+1021598 Dead-end page ZKI side
+1025363 Dead-end page ZKI side
+1025476 Dead-end page ZKI side
+1026058 Dead-end page ZKI side
+1026298 Dead-end page ZKI side
+1027877 Dead-end page ZKI side
+1027998 Dead-end page ZKI side
+1031546 Dead-end page ZKI side
+1031814 Dead-end page ZKI side
+1033434 Dead-end page ZKI side
+1033939 Dead-end page ZKI side
+1034017 Dead-end page ZKI side
+1034204 Dead-end page ZKI side
+1034967 Dead-end page ZKI side
+1035327 Dead-end page ZKI side
+1037530 Dead-end page ZKI side
+1015710 ZKI thinks there is a matchmaking game here, and there might have been at some point, but the replay link takes you to a 2v1 custom game with a low terraform cost multiplier (wat)
+1027932 Abnormal exit (both players left)
+1029681 Abnormal exit (both players left)
+1041416 Actually a Future Wars game
+1039603 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1038801 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1039157 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1039673 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1039706 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1039784 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1039838 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1040060 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1040516 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1040840 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1040920 (Automatic) Could not find demofile link, replay skipped. Added 2021-02-09
+1043422 Anomaly TODO investigate
+1044123 Anomaly TODO investigate
+1055475 Both players quit
+1060686 Abnormal exit (both players left)
+1062982 Anomaly TODO investigate
