@@ -315,8 +315,15 @@ function widget:AddConsoleMessage(msg)
 		return
 	end
 	-- Listen for 'game_message:' messages
-	if msg.msgtype ~= "game_message" then return end
-	log("Received game_message: " .. msg.text)
+	if msg.msgtype == "game_message" then
+		log("Received game_message: " .. msg.text)
+	elseif msg.msgtype == 'autohost' then
+		if msg.text == '> exiting game' then
+			log('autohost exit')
+		elseif msg.text:find('^> Players .* did not choose a start position. Game will be aborted.$') ~= nil then
+			log('player nonplacement')
+		end
+	end
 end
 
 
