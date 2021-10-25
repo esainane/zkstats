@@ -305,6 +305,7 @@ function widget:Initialize()
 	if not logfile then
 		Spring.Echo('<Replay Stats> Something went wrong opening the output file! Was the parent directory created before spring was run?')
 		Spring.Echo('<Replay Stats> Error: ' .. err)
+		return
 	end
 end
 
