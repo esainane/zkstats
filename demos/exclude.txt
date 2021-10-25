@@ -67,3 +67,11 @@
 1055475 Both players quit
 1060686 Abnormal exit (both players left)
 1062982 Anomaly TODO investigate
+1080140 Both players timed out
+1086106 Both players gone
+1086017 Both players gone
+1085477 Both players gone
+1078130 Both players gone
+1079511 Desync
+1077076 Both players gone
+1160775 Empty file
