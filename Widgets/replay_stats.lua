@@ -329,6 +329,10 @@ function widget:AddConsoleMessage(msg)
 		elseif msg.text:find('^> Players .* did not choose a start position. Game will be aborted.$') ~= nil then
 			log('player nonplacement')
 		end
+	elseif msg.msgtype == 'other' then
+		if msg.text == 'No clients connected, shutting down server' then
+			log('all players disconnected')
+		end
 	end
 end
 

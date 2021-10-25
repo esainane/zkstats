@@ -21,13 +21,16 @@ name_to_player = {}
 # Scrape events.log
 playerinfo = re.compile(r'\[(?:0|1)\] (?P<name>.*), team: (?P<teamid>[0-9]+), elo:(?P<elo>[0-9]+)(?:, userid: (?P<userid>[0-9]+))?(?:, ai: (?P<ai>.*))?')
 facplop = re.compile(r'\[(?P<frame>[0-9]+)\] Event \[(?P<location>[^\]]+)\]: (?P<teamid>[0-9]+) finished unit (?P<fac>Cloakbot Factory|Shieldbot Factory|Rover Assembly|Hovercraft Platform|Gunship Plant|Airplane Plant|Spider Factory|Jumpbot Factory|Tank Foundry|Amphbot Factory|Shipyard|Strider Hub)')
+
 draw = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: The game ended in a draw!')
 autohostexit = re.compile(r'\[(?P<frame>[0-9]+)\] autohost exit')
 nostartpos = re.compile(r'\[(?P<frame>[0-9]+)\] player nonplacement')
+all_players_exit = re.compile(r'\[(?P<frame>[0-9]+)\] all players disconnected')
+
 winner = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: (?P<name>.*) wins!')
 statsheader = re.compile(r'\[(?P<frame>[0-9]+)\] Game End Stats Header: ')
 
-skip_conditions = [draw, autohostexit, nostartpos]
+skip_conditions = [draw, autohostexit, nostartpos, all_players_exit]
 
 win = None
 duration = None
