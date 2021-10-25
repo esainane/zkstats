@@ -145,6 +145,7 @@ var dv = (function(dv) {
 
     window.data = data;
     const cfdata = crossfilter(data);
+    window.cfdata = cfdata;
     const vis = d3.select("#vis");
     /* Track which dimensions we've created */
     const heap = window.heap = new Map();
