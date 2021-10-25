@@ -258,6 +258,11 @@ end
 --
 
 local function startup()
+	local modOptions = Spring.GetModOptions() or {}
+	local noElo = Spring.Utilities.tobool(modOptions.noelo)
+	if noElo then
+		log('Game has noElo set.')
+	end
 	local allyTeamList = Spring.GetAllyTeamList()
 
 	for i = 1, #allyTeamList do
