@@ -164,7 +164,8 @@
         },{
           "vis": "pie",
           "dim": "zk_version",
-          "dim_pretty": "Zero-K Version"
+          "dim_pretty": "Zero-K Version",
+          "sort_name": true
         },{
           "vis": "pie",
           "dim": "has_fullwhr",

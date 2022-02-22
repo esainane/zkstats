@@ -232,6 +232,21 @@ var dv = (function(dv) {
         .dimension(h.dim)
         .group(h.group)
         ;
+      if (conf.sort_name) {
+        // eg "Zero-K 1.8.4.2" doesn't prefix a v, while "Zero-K v1.9.1.0" does (aaaa)
+        // Patch around this so things still come in the correct order
+        const re = / v?|\./;
+        const cmp = (l,r) => {
+          if (l.key === r.key) {
+            return 0;
+          }
+          if (l.key.split(re) > r.key.split(re)) {
+            return 1;
+          }
+          return -1;
+        };
+        ret.sliceSorter(cmp);
+      }
       return ret;
     }
     /* Create dimension, group, and chart in sunburst format */
@@ -347,14 +362,13 @@ var dv = (function(dv) {
         .margins({left: 110, right: 18, top: 5, bottom: 110})
         .height(colTypeToWidth[conf.parent.type])
         .width(colTypeToWidth[conf.parent.type])
-        .title(function(d) { return d.key + ": " + d.value; })
         .dimension(h.dim)
         .group(h.group)
         .keyAccessor(d => d.key[1])
         .valueAccessor(d => d.key[0])
         .colorAccessor(d => { const wr = d.value[0] / (d.value[0] + d.value[1]); return wr; })
         .colors(c => isNaN(c) ? '#ffffff' : colorScale(c))
-        .title(d => `${d.key}: ${d.value} (${parseInt(d.value[0] / (d.value[0] + d.value[1]) * 100)}%)`)
+        .title(d => `${d.key[0]} vs ${d.key[1]}: ${d.value[0]}:${d.value[1]} (${parseInt(d.value[0] / (d.value[0] + d.value[1]) * 100)}%)`)
         ;
       if (conf.order) {
         const incrementingRange = values.map((d,i) => i);
