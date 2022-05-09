@@ -49,6 +49,7 @@ fetch-replays: $(REPLAYS) $(RDETAILS)
 define mapmanualfallback
 /Manual downloads:/{
 n
+s/\r//
 s_^.*<a href='\([^']\+\)'.*$$_\1_p
 }
 endef
@@ -58,6 +59,7 @@ define getspringversion
 n
 n
 n
+s/\r//
 s_^ *\([-a-zA-Z0-9_.]\+\)$$_\1_p
 }
 endef
@@ -67,6 +69,7 @@ define getzkversion
 n
 n
 n
+s/\r//
 s_^ *\([-a-zA-Z0-9_. ]\+\)$$_\1_p
 }
 endef
