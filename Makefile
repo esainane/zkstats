@@ -26,7 +26,7 @@ endif
 # BATTLEIDS is the set of battle IDs that we can get from the index
 # ALLBATTLEIDS is BATTLEIDS, plus what we already have locally.
 EXCLUDEDBATTLEIDS:=$(shell cut -d\  -f1 demos/exclude.txt)
-ALLBATTLEIDS:=$(filter-out $(EXCLUDEDBATTLEIDS), $(BATTLEIDS) $(shell find demos -mindepth 1 -type d | sed 's_^.*/\([^\/*]\)_\1_'))
+ALLBATTLEIDS:=$(filter-out $(EXCLUDEDBATTLEIDS), $(BATTLEIDS) $(shell find demos -mindepth 1 -maxdepth 1 -type d | sed 's_^.*/\([^\/*]\)_\1_')) 1394550 1389329
 REPLAYS:=$(addprefix demos/,$(addsuffix /replay.sdfz, $(ALLBATTLEIDS)))
 RDETAILS:=$(addprefix demos/,$(addsuffix /detail.html, $(ALLBATTLEIDS)))
 EVENTS:=$(addprefix stats/,$(addsuffix /events.log, $(ALLBATTLEIDS)))
