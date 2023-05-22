@@ -154,5 +154,5 @@ summaries/%/summary.json: stats/%/events.log postprocess.py
 
 summaries/all.json: $(SUMMARIES)
 	test -f archive.json.frags || touch archive.json.frags
-	( echo -n [ && cat archive.json.frags summaries/*/summary.json | paste -s -d, - && echo -n ] ) > "$@.tmp"
+	( echo -n [ && cat archive.json.frags && find summaries -maxdepth 2 -name summary.json -exec cat {} + | paste -s -d, - && echo -n ] ) > "$@.tmp"
 	mv -f "$@.tmp" "$@"
