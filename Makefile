@@ -98,26 +98,26 @@ games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 #	$(PRDOWNLOADER) --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
 
 $(ZKDIR)/engine/linux64/%/spring-headless:
-	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetch spring engine version $*" ===; echo; curl -Ls "https://zero-k.info/engine/linux64/$*.zip" > "$${WORK}/$*.zip" && cd "$(ZKDIR)/engine/linux64" && mkdir -p "$*" && cd "$*" && unzip "$${WORK}/$*.zip" && chmod -R o-w . && chmod -R g+rX . && chmod g+x spring spring-headless spring-dedicated; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
+	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetch spring engine version $*" ===; echo; curl -LsS "https://zero-k.info/engine/linux64/$*.zip" > "$${WORK}/$*.zip" && cd "$(ZKDIR)/engine/linux64" && mkdir -p "$*" && cd "$*" && unzip "$${WORK}/$*.zip" && chmod -R o-w . && chmod -R g+rX . && chmod g+x spring spring-headless spring-dedicated; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
 
 # Download different maps.
 export mapmanualfallback
 maps/%.html:
-	BASE=$$(pwd) && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd maps/ && curl -Ls -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1 | xargs -n1 -d \\n curl -Ls -O -R; fi || (echo "FAILED getting map ID $*" ; rm -f "$${BASE}/$@" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
+	BASE=$$(pwd) && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd maps/ && curl -LsS -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1 | xargs -n1 -d \\n curl -LsS -O -R; fi || (echo "FAILED getting map ID $*" ; rm -f "$${BASE}/$@" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
 	sleep 0.2
 
 # Finally, link replays to the Zero-K version, engine version, and map that it depends on.
 -include $(EVENTDEPS)
 
 demos/%/detail.html:
-	mkdir -p "$(dir $@)" && cd "$(dir $@)" && curl -Ls "https://zero-k.info/Battles/Detail/$*" > detail.html
+	mkdir -p "$(dir $@)" && cd "$(dir $@)" && curl -LsS "https://zero-k.info/Battles/Detail/$*" > detail.html
 	sleep 0.2
 
 # replay.sdfz is a symlink to the full replay with a more accessible name
 # This recipe downloads the replay file as part of the process
 demos/%/replay.sdfz: | demos/%/detail.html
 	# Scrape the battle detail page for the "Manual download" replay link, extract it, urlencode the filename, reconstruct the full URL, download it, then symlink replay.sdfz to the result
-	mkdir -p "$(dir $@)" && cd "$(dir $@)" && test -s "detail.html" && read -r u < <(cat "detail.html" | sed -n "s_^.*<a href='/replays/\(.*\.sdfz\)'>Manual download</a>.*\$$_\1_p" | tr -d \\n | jq -sRr @uri); if [ "x$$u" != x ]; then echo "$$u" | sed 's_^.*$$_https://zero-k.info/replays/&_' | xargs -n1 -d \\n curl -Ls -O -R && ls -1t *.sdfz | grep -vx replay.sdfz | head -1 | xargs -n1 -d \\n -I{} ln -sf {} replay.sdfz; else echo 'Could not find demofile link in demos/$*/detail.html, assuming no link. Skipping!'; printf '%d (Automatic) Could not find demofile link, replay skipped. Added %s\n' "$*" "$$(date --iso-8601)" >> ../exclude.txt; fi
+	mkdir -p "$(dir $@)" && cd "$(dir $@)" && test -s "detail.html" && read -r u < <(cat "detail.html" | sed -n "s_^.*<a href='/replays/\(.*\.sdfz\)'>Manual download</a>.*\$$_\1_p" | tr -d \\n | jq -sRr @uri); if [ "x$$u" != x ]; then echo "$$u" | sed 's_^.*$$_https://zero-k.info/replays/&_' | xargs -n1 -d \\n curl -LsS -O -R && ls -1t *.sdfz | grep -vx replay.sdfz | head -1 | xargs -n1 -d \\n -I{} ln -sf {} replay.sdfz; else echo 'Could not find demofile link in demos/$*/detail.html, assuming no link. Skipping!'; printf '%d (Automatic) Could not find demofile link, replay skipped. Added %s\n' "$*" "$$(date --iso-8601)" >> ../exclude.txt; fi
 	sleep 0.2
 
 
