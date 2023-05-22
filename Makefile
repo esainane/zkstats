@@ -101,9 +101,26 @@ $(ZKDIR)/engine/linux64/%/spring-headless:
 	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetch spring engine version $*" ===; echo; curl -LsS "https://zero-k.info/engine/linux64/$*.zip" > "$${WORK}/$*.zip" && cd "$(ZKDIR)/engine/linux64" && mkdir -p "$*" && cd "$*" && unzip "$${WORK}/$*.zip" && chmod -R o-w . && chmod -R g+rX . && chmod g+x spring spring-headless spring-dedicated; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
 
 # Download different maps.
+# Prefer a https://zero-k.info download link first, then the first entry of
+# the manual downloads link.
+# Note that ZKI is naughty, and can provide an invalid URL for a[href].
+# If the map file contained spaces/quotes/etc, then this URL will also
+# contain spaces/quotes/etc. Check against the following if modifying this
+# code, to make sure nothing broke:
+#  - 'Crystallized Plains 1.01.sd7'
+#  - 'Lowland Crossing Revised v2'
+#  - 'Ram Ramp v0.2.sd7'
+#  - 'Rosetta 1.3.sd7'
+#  - 'Stradvar Valleys.sd7'
+#  - 'Tombstone Desert V2.sd7'
+# Make sure that the files are saved with the non-uri encoded name!
+# Modern browsers will silently fix this junk when encountered, but curl will
+# not, and error out. To fix this, we call jq to uri-encode the final
+# component, but not the rest of the URL.
+# ...I am so sorry.
 export mapmanualfallback
 maps/%.html:
-	BASE=$$(pwd) && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd maps/ && curl -LsS -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1 | xargs -n1 -d \\n curl -LsS -O -R; fi || (echo "FAILED getting map ID $*" ; rm -f "$${BASE}/$@" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
+	BASE=$$(pwd) && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd maps/ && curl -LsS -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && read -r -t 15 MAPURL < <(cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1); echo "Using scraped URL: $${MAPURL}"; DIR="$$(dirname "$${MAPURL}")" FILE="$$(basename "$${MAPURL}" | tr -d \\n | jq -sRr @uri)"; curl -LsS -o "$$(basename "$${MAPURL}")" -R "$${DIR}/$${FILE}"; fi || (echo "FAILED getting map ID $*" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
 	sleep 0.2
 
 # Finally, link replays to the Zero-K version, engine version, and map that it depends on.
