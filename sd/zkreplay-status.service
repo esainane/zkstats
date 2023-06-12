@@ -1,6 +1,5 @@
 [Unit]
 Description=Make public status of zkreplay-process
-After=zkreplay-archive.service
 
 [Service]
 Type=simple

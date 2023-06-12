@@ -1,11 +1,11 @@
 Zero-K/
 demos/
+games/
 maps/
+shards/
 stats/
 summaries/
 .*
 *~
 *.bak
 public/data/live.json
-archive
-archive.json.frags

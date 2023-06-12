@@ -6,7 +6,7 @@ Type=simple
 User=zkreplayfetch
 Group=zkreplay
 
-ExecStart=/var/lib/zkreplay/sd/indexrange.sh 0 600
+ExecStart=/var/lib/zkreplay/sd/scrape.sh 0 600
 WorkingDirectory=/var/lib/zkreplay
 
 # Play nicely with other processes on the system. We're pretty low priority.
@@ -24,7 +24,7 @@ NoNewPrivileges=true
 
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/zkreplay/demos /var/lib/zkreplay/games /var/lib/zkreplay/maps /var/lib/zkreplay/Zero-K
+ReadWritePaths=/var/lib/zkreplay/demos /var/lib/zkreplay/games /var/lib/zkreplay/maps /var/lib/zkreplay/shards /var/lib/zkreplay/Zero-K
 
 PrivateTmp=true
 PrivateDevices=true

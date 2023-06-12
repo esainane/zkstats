@@ -6,7 +6,7 @@ main() {
   local amount="$1"
   systemctl disable zkreplay-fetch.timer zkreplay-process.timer
   local base="$(ls -1 /var/lib/zkreplay/demos/ | grep -v index | wc -l)"
-  su - zkreplayfetch -s /bin/bash -c "/var/lib/zkreplay/sd/indexrange.sh '$base' '$(($base + $amount))'"
+  su - zkreplayfetch -s /bin/bash -c "/var/lib/zkreplay/bin/scrape.sh '$base' '$(($base + $amount))'"
   systemctl enable zkreplay-fetch.timer zkreplay-process.timer
 }
 
