@@ -21,8 +21,7 @@ main() {
     while read offset; do
         retrieve_all_types "$offset" "$@"
     done < <(seq "$start" 40 "$end") | grep -vxFf demos/exclude.txt | paste -d\  -s - | sed 's/^/BATTLEIDS:=/' > demos/index.mk.tmp
-    mv -f demos/index.mk.tmp demos/index.mk.in
-    mv -f demos/index.mk.in demos/index.mk
+    mv -f demos/index.mk.tmp demos/index.mk
     make -Rrk demos || make -Rrk demos # Fetching a new game version sometimes fails the first time. FIXME!
 }
 
