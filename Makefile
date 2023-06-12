@@ -134,7 +134,7 @@ demos/%/detail.html:
 # This recipe downloads the replay file as part of the process
 demos/%/replay.sdfz: | demos/%/detail.html
 	# Scrape the battle detail page for the "Manual download" replay link, extract it, urlencode the filename, reconstruct the full URL, download it, then symlink replay.sdfz to the result
-	mkdir -p "$(dir $@)" && cd "$(dir $@)" && test -s "detail.html" && read -r u < <(cat "detail.html" | sed -n "s_^.*<a href='/replays/\(.*\.sdfz\)'>Manual download</a>.*\$$_\1_p" | tr -d \\n | jq -sRr @uri); if [ "x$$u" != x ]; then echo "$$u" | sed 's_^.*$$_https://zero-k.info/replays/&_' | xargs -n1 -d \\n curl -LsS -O -R && ls -1t *.sdfz | grep -vx replay.sdfz | head -1 | xargs -n1 -d \\n -I{} ln -sf {} replay.sdfz; else echo 'Could not find demofile link in demos/$*/detail.html, assuming no link. Skipping!'; printf '%d (Automatic) Could not find demofile link, replay skipped. Added %s\n' "$*" "$$(date --iso-8601)" >> ../exclude.txt; fi
+	mkdir -p "$(dir $@)" && cd "$(dir $@)" && test -s "detail.html" && read -r u < <(cat "detail.html" | sed -n "s_^.*<a href='/replays/\(.*\.sdfz\)'>Manual download</a>.*\$$_\1_p" | tr -d \\n | jq -sRr @uri); if [ "x$$u" != x ]; then echo "$$u" | sed 's_^.*$$_https://zero-k.info/replays/&_' | xargs -n1 -d \\n curl -LsS -O -R && ls -1t *.sdfz | grep -vx replay.sdfz | head -1 | xargs -d \\n -I{} ln -sf {} replay.sdfz; else echo 'Could not find demofile link in demos/$*/detail.html, assuming no link. Skipping!'; printf '%d (Automatic) Could not find demofile link, replay skipped. Added %s\n' "$*" "$$(date --iso-8601)" >> ../exclude.txt; fi
 	sleep 0.2
 
 
