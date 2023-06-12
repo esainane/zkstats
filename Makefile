@@ -98,7 +98,7 @@ games/%: | $(ZKDIR)/rapid/repos.springrts.com/zk/versions.gz
 #	$(PRDOWNLOADER) --download-engine "spring $* maintenance" --filesystem-writepath "$(ZKDIR)"
 
 $(ZKDIR)/engine/linux64/%/spring-headless:
-	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetch spring engine version $*" ===; echo; curl -LsS "https://zero-k.info/engine/linux64/$*.zip" > "$${WORK}/$*.zip" && cd "$(ZKDIR)/engine/linux64" && mkdir -p "$*" && cd "$*" && unzip "$${WORK}/$*.zip" && chmod -R o-w . && chmod -R g+rX . && chmod g+x spring spring-headless spring-dedicated; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
+	WORK=$$(mktemp -d) && echo; echo "=== Attempting to fetch spring engine version $*" ===; echo; curl -LsS "https://zero-k.info/engine/linux64/$*.zip" > "$${WORK}/$*.zip" && cd "$(ZKDIR)/engine/linux64" && mkdir -p "$*" && cd "$*" && unzip "$${WORK}/$*.zip" && chmod -R o-w . && chmod -R ug+rX . && chmod ug+x spring spring-headless spring-dedicated; rm -rf "$${WORK}"; test -x "$(ZKDIR)/engine/linux64/$*/spring-headless"
 
 # Download different maps.
 # Prefer a https://zero-k.info download link first, then the first entry of
