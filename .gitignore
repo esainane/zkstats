@@ -1,3 +1,4 @@
+# These get filled out by zkstats
 Zero-K/
 demos/
 games/
@@ -5,8 +6,12 @@ maps/
 shards/
 stats/
 summaries/
+
+# This is a link to what we want to serve on the site, set locally
+public/data/live.json
+
+# Ignore the usual cruft
 .*
 *~
 *.bak
 scratch
-public/data/live.json
