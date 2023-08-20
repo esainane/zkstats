@@ -13,8 +13,6 @@ WorkingDirectory=/var/lib/zkreplay
 Nice=10
 IOSchedulingPriority=5
 
-StandardOutput=syslog
-StandardError=syslog
 SyslogIdentifier=zkreplay-fetch
 
 # Sandbox things moderately. We still need to communicate with the outside world to fetch things.

@@ -18,8 +18,6 @@ MemoryMax=4608M
 # Emphatically volunteer to be killed if the system runs out of memory, since it's probably going to be springrts' fault
 OOMScoreAdjust=800
 
-StandardOutput=syslog
-StandardError=syslog
 SyslogIdentifier=zkreplay-process
 
 # Sandbox things fairly strictly. We want this to be in a detached network state so not only is springrts unable to accidentally communicate/send stats to the outside world, but temporary network sockets that are opened during processing don't affect the rest of our system.
