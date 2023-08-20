@@ -35,9 +35,12 @@ EVENTS:=$(addprefix stats/,$(addsuffix /events.log, $(ALLBATTLEIDS)))
 EVENTDEPS:=$(addprefix demos/,$(addsuffix /events.log.deps, $(ALLBATTLEIDS)))
 SUMMARIES:=$(addprefix summaries/,$(addsuffix /summary.json, $(ALLBATTLEIDS)))
 
+.PHONY: default demos stats summaries fetch process
+
 # Main targets
 fetch: $(REPLAYS) $(RDETAILS)
 	touch fetch-stamp
+
 process: $(EVENTS) $(SUMMARIES) summaries/shard.json.frags
 	touch summaries/shard.json.frags
 
@@ -46,7 +49,6 @@ demos: fetch
 stats: process
 summaries: process
 
-.PHONY: default demos stats summaries demos/index.mk fetch process
 .SECONDARY:
 
 #
