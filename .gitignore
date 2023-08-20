@@ -8,4 +8,5 @@ summaries/
 .*
 *~
 *.bak
+scratch
 public/data/live.json
