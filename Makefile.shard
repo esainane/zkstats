@@ -39,7 +39,7 @@ SUMMARIES:=$(addprefix summaries/,$(addsuffix /summary.json, $(ALLBATTLEIDS)))
 
 # Main targets
 fetch: $(REPLAYS) $(RDETAILS)
-	touch fetch-stamp
+	touch fetch-complete-stamp
 
 process: $(EVENTS) $(SUMMARIES) summaries/shard.json.frags
 	touch summaries/shard.json.frags

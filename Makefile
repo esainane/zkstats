@@ -12,11 +12,15 @@ SHARDS:=$(shell find shards -mindepth 1 -maxdepth 1 -type d | sed 's_^.*/\([^\/*
 # For the actual shard directories, use SHARDDIRS.
 SHARDDIRS:=$(addprefix shards/,$(SHARDS))
 
-# There are three files in each shard we examine from the top level.
+# There are four files in each shard we examine from the top level.
 # SHARDDIR/demos/index.mk is updated by the scraping process, and means there
 #   are new battle IDs allocated to this shard. If this is the case, we need
 #   to download the associated replay and dependencies (engine, map, game),
-#   and update the fetch timestamp
+#   and update the fetch timestamp.
+# SHARDDIR/fetch-complete-stamp is updated by the shard makefile as part of
+#   the fetch target, indicating that the fetch target completed fully and
+#   successfully, and does not need to be examined again until and unless the
+#   list of battles to fetch has changed.
 # SHARDDIR/fetch-stamp is updated by the shard makefile as part of the fetch
 #   target, indicating that new replays are available to be processed.
 # SHARDDIR/summaries/shard.json.frags is created by the shard makefile as part
@@ -35,7 +39,7 @@ SHARDDIRS:=$(addprefix shards/,$(SHARDS))
 # At the time of writing, we're 27% there.
 
 # No use for all SHARDINDICES - pattern prereq in the below fetch-stamp rule
-SHARDFETCHSTAMPS:=$(addsuffix /fetch-stamp,$(SHARDDIRS))
+SHARDFETCHSTAMPS:=$(addsuffix /fetch-complete-stamp,$(SHARDDIRS))
 SHARDRESULTS:=$(addsuffix /summaries/shard.json.frags,$(SHARDDIRS))
 
 fetch: $(SHARDFETCHSTAMPS)
@@ -61,7 +65,7 @@ shards/%/demos/index.mk:
 # Recipe pattern: Shard ID, eg: $* := 160
 # FIXME: Sometimes fetching a new game fails the first time, so we run make
 #   fetch twice if the first time fails
-shards/%/fetch-stamp: shards/%/demos/index.mk
+shards/%/fetch-complete-stamp: shards/%/demos/index.mk
 	@echo "Fetching shard $*..."
 	#$(MAKE) -Rrk -C "$(dir $@)" fetch || $(MAKE) -Rrk -C "$(dir $@)" fetch
 	make -Rrk -C "$(dir $@)" fetch || make -Rrk -C "$(dir $@)" fetch
