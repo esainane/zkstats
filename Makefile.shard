@@ -26,7 +26,7 @@ endif
 # Only the first part of each line is taken as an ID, the rest are available for comments.
 EXCLUDEDBATTLEIDS:=$(shell cut -d\  -f1 ../../demos/exclude.txt)
 # ALLBATTLEIDS is BATTLEIDS, plus what we already have locally, minus excluded battle IDs.
-ALLBATTLEIDS:=$(filter-out $(EXCLUDEDBATTLEIDS), $(BATTLEIDS) $(shell find demos -mindepth 1 -maxdepth 1 -type d | sed 's_^.*/\([^\/*]\)_\1_'))
+ALLBATTLEIDS:=$(filter-out $(EXCLUDEDBATTLEIDS), $(BATTLEIDS) $(shell find demos/ -mindepth 1 -maxdepth 1 -type d | sed 's_^.*/\([^\/*]\)_\1_'))
 
 # Finally, manipulate ALLBATTLEIDS to create variables referring to files en masse
 REPLAYS:=$(addprefix demos/,$(addsuffix /replay.sdfz, $(ALLBATTLEIDS)))
@@ -179,5 +179,5 @@ summaries/%/summary.json: stats/%/events.log postprocess.py
 # other shards using more commas, and the result is surrounded by start and
 # end array characters [ and ], the result is valid json.
 summaries/shard.json.frags: $(SUMMARIES)
-	find summaries -maxdepth 2 -name summary.json -exec cat {} + | paste -s -d, - > "$@.tmp"
+	find summaries/ -maxdepth 2 -name summary.json -exec cat {} + | paste -s -d, - > "$@.tmp"
 	mv -f "$@.tmp" "$@"

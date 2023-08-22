@@ -78,6 +78,6 @@ shards/%/summaries/shard.json.frags: shards/%/fetch-stamp
 
 # Combine the results from all shards
 summaries/all.json: $(SHARDRESULTS)
-	( echo -n [ && find shards -maxdepth 2 -name shard.json.frags -exec cat {} + | paste -s -d, - && echo -n ] ) > "$@.tmp"
+	( echo -n [ && find -L shards -maxdepth 3 -name shard.json.frags -exec cat {} + | paste -s -d, - && echo -n ] ) > "$@.tmp"
 	mv -f "$@.tmp" "$@"
 
