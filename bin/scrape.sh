@@ -36,6 +36,7 @@ commit_shard() {
             ln -sfT ../../"${i}" shards/"${shard}"/"${i}"
         done
         ln -sfT ../../Makefile.shard shards/"${shard}"/Makefile
+        ln -sfT ../../postprocess.py shards/"${shard}"/postprocess.py
     fi
     # Build the new index.mk file in a temporary file first
     paste -d\  -s - < demos/index.mk.in | sed 's/^/BATTLEIDS:=/' > demos/${shard}/index.mk.tmp
