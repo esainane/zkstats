@@ -165,3 +165,28 @@
 1287917 Engine 105.1.1-798 headless crashes
 1287937 Engine 105.1.1-798 headless crashes
 1699451 29 hour abandoned game between two Nebulous players
+1635800 Analysis widgets prohibited
+1635804 Analysis widgets prohibited
+1635810 Analysis widgets prohibited
+1635818 Analysis widgets prohibited
+1635829 Analysis widgets prohibited
+1635841 Analysis widgets prohibited
+1635846 Analysis widgets prohibited
+1635850 Analysis widgets prohibited
+1635854 Analysis widgets prohibited
+1644741 Analysis widgets prohibited
+1644746 Analysis widgets prohibited
+1644757 Analysis widgets prohibited
+1644774 Analysis widgets prohibited
+1644782 Analysis widgets prohibited
+1644795 Analysis widgets prohibited
+1644810 Analysis widgets prohibited
+1644816 Analysis widgets prohibited
+1644822 Analysis widgets prohibited
+1647701 Analysis widgets prohibited
+1647710 Analysis widgets prohibited
+1647719 Analysis widgets prohibited
+1648596 Analysis widgets prohibited
+1648603 Analysis widgets prohibited
+1648607 Analysis widgets prohibited
+1648623 Analysis widgets prohibited
