@@ -76,7 +76,7 @@ main() {
         scrape_all_battles "$offset" "$@"
     done < <(seq "$start" 40 "$end") | grep -vxFf demos/exclude.txt | sort -n | shardify
     echo "Delegating to makefile..."
-    make -Rrk -d fetch
+    make -Rrk fetch
 }
 
 if [ $# -lt 2 ]; then
