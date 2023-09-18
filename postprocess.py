@@ -22,15 +22,18 @@ name_to_player = {}
 playerinfo = re.compile(r'\[(?:0|1)\] (?P<name>.*), team: (?P<teamid>[0-9]+), elo:(?P<elo>[0-9]+)(?:, userid: (?P<userid>[0-9]+))?(?:, ai: (?P<ai>.*))?')
 facplop = re.compile(r'\[(?P<frame>[0-9]+)\] Event \[(?P<location>[^\]]+)\]: (?P<teamid>[0-9]+) finished unit (?P<fac>Cloakbot Factory|Shieldbot Factory|Rover Assembly|Hovercraft Platform|Gunship Plant|Airplane Plant|Spider Factory|Jumpbot Factory|Tank Foundry|Amphbot Factory|Shipyard|Strider Hub)')
 
-draw = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: The game ended in a draw!')
-autohostexit = re.compile(r'\[(?P<frame>[0-9]+)\] autohost exit')
-nostartpos = re.compile(r'\[(?P<frame>[0-9]+)\] player nonplacement')
-all_players_exit = re.compile(r'\[(?P<frame>[0-9]+)\] all players disconnected')
+class SkipCondition(object):
+    def __init__(self, why, expr, extra=lambda: True):
+        self.why = why
+        self.expr = re.compile(expr)
+        self.extra = extra
+
+    def satisfied(self, line):
+        return self.expr.match(line) and self.extra()
+
 
 winner = re.compile(r'\[(?P<frame>[0-9]+)\] Received game_message: (?P<name>.*) wins!')
 statsheader = re.compile(r'\[(?P<frame>[0-9]+)\] Game End Stats Header: ')
-
-skip_conditions = [draw, autohostexit, nostartpos, all_players_exit]
 
 win = None
 duration = None
@@ -39,6 +42,13 @@ started = None
 sp = None
 zk = None
 skip = False
+
+draw = SkipCondition('Game Draw', r'\[(?P<frame>[0-9]+)\] Received game_message: The game ended in a draw!')
+autohostexit = SkipCondition('Autohost exit', r'\[(?P<frame>[0-9]+)\] autohost exit')
+nostartpos = SkipCondition('No start placement', r'\[(?P<frame>[0-9]+)\] player nonplacement')
+all_players_exit = SkipCondition('All players disconnected', r'\[(?P<frame>[0-9]+)\] all players disconnected', lambda: win == None)
+
+skip_conditions = [draw, autohostexit, nostartpos, all_players_exit]
 
 def d(*args, **kwargs):
     print(file=stderr, *args, **kwargs)
@@ -106,8 +116,12 @@ with open(filename, 'r') as f:
             duration = m.group('frame')
             win = m.group('name')
             continue
-        if any(sc.match(line) for sc in skip_conditions):
-            skip = True
+        for sc in skip_conditions:
+            if sc.satisfied(line):
+                d("Skip condition met: " + sc.why + ": " + line)
+                skip = True
+                break
+        if skip:
             break
         if win is None:
             continue
