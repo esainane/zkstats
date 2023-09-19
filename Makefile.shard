@@ -134,7 +134,7 @@ $(ZKDIR)/engine/linux64/%/spring-headless:
 export mapmanualfallback
 maps/%.html:
 	mkdir -p ../../maps
-	BASE=$$(pwd)/../.. && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd ../../maps/ && curl -LsS -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && read -r -t 15 MAPURL < <(cd "$(ZKDIR)/maps" && (sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1); echo "Using scraped URL: $${MAPURL}"; DIR="$$(dirname "$${MAPURL}")" FILE="$$(basename "$${MAPURL}" | tr -d \\n | jq -sRr @uri)"; curl -LsS -o "$$(basename "$${MAPURL}")" -R "$${DIR}/$${FILE}"; fi || (echo "FAILED getting map ID $*" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
+	BASE=$$(pwd)/../.. && if [ ! -f "maps/$*.html" ]; then echo; echo "=== Attempting to fetch map $*... ==="; echo; cd ../../maps/ && curl -LsS -R "https://zero-k.info/Maps/Detail/$*" > "$*.html" && cd "$(ZKDIR)/maps" && read -r -t 15 MAPURL < <((sed -n "s_^.*<a href='\(https://zero-k.info/content/maps/[^']\+.sd[7z]\)'.*\$$_\1_p" "$${BASE}/maps/$*.html" ; sed -n "$${mapmanualfallback}" "$${BASE}/maps/$*.html") | head -1); echo "Using scraped URL: $${MAPURL}"; DIR="$$(dirname "$${MAPURL}")" FILE="$$(basename "$${MAPURL}" | tr -d \\n | jq -sRr @uri)"; curl -LsS -o "$$(basename "$${MAPURL}")" -R "$${DIR}/$${FILE}"; fi || (echo "FAILED getting map ID $*" ; mv -f "$${BASE}/maps/$*.html" "$${BASE}/maps/FAILED.$*.html" ; false)
 	touch fetch-stamp
 	sleep 0.2
 
