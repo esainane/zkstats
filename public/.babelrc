@@ -1,0 +1,13 @@
+{
+  "presets": [ "@babel/preset-env" ],
+  "plugins": [
+    ["babel-plugin-inferno", {"imports": true}],
+    ["module-resolver", {
+      "root": ["."],
+      "alias": {
+          "react": "inferno-compat",
+          "react-dom": "inferno-compat"
+      }
+    }]
+  ]
+}
