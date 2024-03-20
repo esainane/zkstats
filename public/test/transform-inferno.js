@@ -7,7 +7,7 @@ const transformInferno = require('ts-plugin-inferno').default;
  * the previous cache which contains old transformer's content
  */
 module.exports = {
-    version: 1,
-    name: 'hoist-ts-plugin-inferno',
-    factory: transformInferno,
+  version: 1,
+  name: 'hoist-ts-plugin-inferno',
+  factory: transformInferno,
 };
