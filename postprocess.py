@@ -11,7 +11,11 @@ id = int(argv[2])
 # Scrape detail.html
 premap = re.compile(r'a href="/Maps/Detail/')
 mapname = re.compile(r'Map: (?P<name>[^<]+)')
-timestamp = re.compile(r"a href='/replays/(?P<year>[0-9]{4})(?P<month>[0-9]{2})(?P<day>[0-9]{2})_(?P<hours>[0-9]{2})(?P<minutes>[0-9]{2})(?P<seconds>[0-9]{2})_")
+# From 105.1.1-2314-g9e0bf7d, a new way of recording the timestamp in the replay filename was used.
+# Before: YYYYMMDD_HHMMSS_
+# After: YYYY-mm-dd_HH-MM-SS-mmm_
+timestamp = re.compile(r"a href='/replays/(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})_(?P<hours>[0-9]{2})-(?P<minutes>[0-9]{2})-(?P<seconds>[0-9]{2})-[0-9]{3}_")
+timestamp_pre_2314 = re.compile(r"a href='/replays/(?P<year>[0-9]{4})(?P<month>[0-9]{2})(?P<day>[0-9]{2})_(?P<hours>[0-9]{2})(?P<minutes>[0-9]{2})(?P<seconds>[0-9]{2})_")
 userid = re.compile(r"href='/Users/Detail/(?P<userid>[0-9]+)'[^>]+>(?P<username>[^<]+)</a>")
 
 name_to_userid = {}
@@ -69,6 +73,8 @@ with open('demos/%d/detail.html' % id, 'r') as f:
             mapflag = True
             continue
         m = timestamp.search(line)
+        if not m:
+            m = timestamp_pre_2314.search(line)
         if m:
             started = '%s-%s-%s %s:%s:%s' % (m.group('year'), m.group('month'), m.group('day'), m.group('hours'), m.group('minutes'), m.group('seconds'))
         m = userid.search(line)

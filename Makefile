@@ -75,7 +75,7 @@ shards/%/fetch-complete-stamp: shards/%/demos/index.mk
 # Delegate processing to the shard makefile.
 # See: Makefile.shard
 # Recipe pattern: Shard ID, eg: $* := 160
-shards/%/summaries/shard.json.frags: shards/%/fetch-stamp
+shards/%/summaries/shard.json.frags: shards/%/fetch-stamp postprocess.py
 	@echo "Processing shard $*..."
 	$(MAKE) -Rrk -C "shards/$*/" process
 	test -f "$@"
