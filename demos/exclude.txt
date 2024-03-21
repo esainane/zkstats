@@ -75,6 +75,7 @@
 1079511 Desync
 1077076 Both players gone
 1160775 Empty file
+1194827 Two players on same team in 1v1
 1285910 Engine 105.1.1-798 headless crashes
 1285918 Engine 105.1.1-798 headless crashes
 1285920 Engine 105.1.1-798 headless crashes
