@@ -1,7 +1,8 @@
-
+// This file is loaded by Jest to configure the test environment.
+// To run Jest, use the command `npx jest`.
 module.exports = {
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
-  testMatch: ['**/test/**/*.test.js'],
+  testMatch: ['**/test/**/*.test.js', '**/test/**/*.test.jsx'],
   // exclude anything in node_modules
   testPathIgnorePatterns: ['/node_modules/'],
   transform: {
@@ -14,4 +15,3 @@ module.exports = {
   moduleDirectories: ['node_modules', 'src'],
 	testEnvironment: "jsdom"
 };
-console.log('Jest configuration loaded:', module.exports);
