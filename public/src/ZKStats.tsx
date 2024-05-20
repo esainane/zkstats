@@ -41,7 +41,7 @@ const ZKStats = (props, context) => {
   // And to test the loading spinner, wait for a few seconds
   .then((data: Record[]) => new Promise(resolve => setTimeout(() => resolve(data), 300)));
   return (
-    <div class="root">
+    <>
       <LoadWait promise={data}><CrossfilterSystem<Record> data={data}>
         <div style="width: 200px; align-items: end; align-content: flex-end;">
           <Counter />
@@ -66,7 +66,7 @@ const ZKStats = (props, context) => {
             dim="loser_elo" grouper={100} width={300} />
         </div>
       </CrossfilterSystem></LoadWait>
-    </div>
+    </>
   );
 };
 
