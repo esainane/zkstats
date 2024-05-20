@@ -54,24 +54,34 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     // and componentDidUpdate, once Inferno has a real brower DOM object
     // available.
     this.brush = d3_brush.brushX()
-      .on('start brush end', (event) => {
-        if (!event.sourceEvent) return; // Only transition after input.
-        if (!event.selection) return; // Ignore empty selections.
-        const s = event.selection;
-        // Turn this selection into a filter
-        const filter = s.map(this.xScale.invert);
+      .on('start brush end', this._brushing.bind(this));
+  }
 
-        // Update the filter, eventually. Either immediately, if it hasn't
-        // happened recently, or after the debounce period otherwise.
-        this.filterDebouncer(() => {
-          console.log('filtering', this.props.title, s, filter);
-          // Notify crossfilter internals
-          this.dimension.filter(filter);
-          // Have the parent CrossfilterSystem update all listeners
-          // FIXME: This is somewhat excessive
-          this.cf.system.markDirty();
-        });
-      });
+  _brushIsEmpty(selection: [TKey, TKey] | null) {
+    return !selection || selection[1] <= selection[0];
+  };
+
+  _brushing(event: d3_brush.D3BrushEvent<any>) {
+    if (!event.sourceEvent) return; // Only transition after input.
+    if (!event.selection) return; // Ignore empty selections.
+    const s = event.selection;
+    // Turn this selection into a filter
+    const filter = s.map(this.xScale.invert);
+
+    // Update the filter, eventually. Either immediately, if it hasn't
+    // happened recently, or after the debounce period otherwise.
+    this.filterDebouncer(() => {
+      console.log('filtering', this.props.title, s, filter);
+      // Notify crossfilter internals
+      if (this._brushIsEmpty(filter)) {
+        this.dimension.filterAll();
+      } else {
+        this.dimension.filter(filter);
+      }
+      // Have the parent CrossfilterSystem update all listeners
+      // FIXME: This is somewhat excessive
+      this.cf.system.markDirty();
+    });
   }
 
   _nextBinX(key: TKey) {
