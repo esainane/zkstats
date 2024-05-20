@@ -13,6 +13,6 @@ export default class Counter extends Component<{}, {}> {
   render() {
     const count = this.groupAll.value();
     const total = this.context.cf.internal.size();
-    return (<span>{count} / {total}.</span>);
+    return (<span>{count} / {total}</span>);
   }
 }
