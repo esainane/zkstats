@@ -28,7 +28,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     marginTop: 5,
     marginBottom: 60,
     width: 960,
-    height: 300,
+    height: 130,
 
     titleFunc: (d) => `${d.key}: ${d.value}`,
     emptyKey: 0,
