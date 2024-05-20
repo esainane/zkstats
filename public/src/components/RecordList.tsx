@@ -34,19 +34,20 @@ class RecordList<TRecord, TKey extends NaturallyOrderedValue> extends Crossfilte
   }
 
   render() {
-    console.log('RecordList render', this.cf.internal.size(), this.group.all());
-    let data; // = this.group.all();
+    console.log('RecordList render', this.cf.internal.size(), this.group.all(), this.group.top(Infinity), this.dimension.top(Infinity));
+    let data: TRecord[];
     if (this.props.limit) {
-      data = this.group.top(this.props.limit);
+      data = this.dimension.top(this.props.limit);
     } else {
-      data = this.group.top(Infinity);
+      data = this.dimension.top(Infinity);
     }
     return (<ul>
-      {data.map((record) => (
-        <li key={record.key}>
-          <a href={this.props.linkFormat(record.key)}>{record.key}</a>
-        </li>
-      ))}
+      {data.map((record) => {
+        const key = this.props.dimensionSelector(record, this);
+        return (<li key={key as string}>
+          <a href={this.props.linkFormat(key)}>{key}</a>
+        </li>);
+      })}
     </ul>);
   }
 
