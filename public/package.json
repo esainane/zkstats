@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "crossfilter2": "^1.5.4",
+    "d3-brush": "^3.0.0",
+    "d3-scale": "^4.0.2",
+    "d3-time": "^3.1.0",
     "inferno": "^8.2.3",
     "inferno-compat": "^8.2.3"
   },

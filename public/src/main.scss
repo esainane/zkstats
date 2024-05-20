@@ -1,6 +1,119 @@
 .root {
-    display: flex;
-    flex-flow: column wrap;
-    align-items: center;
-    align-content: flex-start;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  align-content: flex-start;
+}
+
+.root > div {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  align-content: flex-start;
+}
+
+// Dark theme by default
+$background: #252323;
+$faint-separator: #333;
+$foreground: #eeeeee;
+$subdued-foreground: #999;
+$link: #0ec0ee;
+
+:root {
+  --color-bg: #{ $background };
+  --faint-separator: #{ $faint-separator };
+  --color-fg: #{ $foreground };
+  --subdued-foreground: #{ $subdued-foreground };
+  --color-link: #{ $link };
+}
+
+// If light theme is explicitly set, use it
+@media (prefers-color-scheme: light) {
+  $background: #eeeeee;
+  $faint-separator: #ddd;
+  $foreground: #111111;
+  $subdued-foreground: #666;
+  $link: #1111fe;
+
+  :root {
+    --color-bg: #{ $background };
+    --faint-separator: #{ $faint-separator };
+    --color-fg: #{ $foreground };
+    --subdued-foreground: #{ $subdued-foreground };
+    --color-link: #{ $link };
+  }
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-link);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h3 {
+  font-weight: normal;
+  margin: 0;
+  padding: 0.2em 0.5em;
+}
+
+.chart {
+  border-bottom: 1px var(--faint-separator) solid;
+}
+.root > div {
+  height: 100%;
+  border-right: 1px var(--faint-separator) solid;
+}
+
+.chart > p {
+  font: 11px sans-serif;
+  color: var(--subdued-foreground);
+  margin: .4em;
+  padding: 0;
+  // Specify size and block, so that space is always reserved
+  display: block;
+  height: 11px;
+  visibility: hidden;
+}
+.chart.filtered > p {
+  visibility: visible;
+}
+.chart > p > a {
+  cursor: pointer;
+}
+span.filterinfo {
+  padding-left: 0.5em;
+}
+
+.chart .axis line {
+  stroke: currentColor;
+}
+
+$tick-text-height: 10px;
+
+.chart .axis text {
+  fill: currentColor;
+  font: $tick-text-height sans-serif;
+  // Align end of text with tick
+  text-anchor: end;
+  // Center text vertically
+  dominant-baseline: hanging;
+}
+.chart .axis.x .tick text {
+  transform: rotate(-90deg);
+  transform-origin: 0 $tick-text-height;
 }
