@@ -74,7 +74,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
       });
   }
 
-  nextBinX(key: TKey) {
+  _nextBinX(key: TKey) {
     const { grouper } = this.props;
     if (typeof grouper === 'string') {
       // If the grouper is a string, we're using a time grouper.
@@ -88,7 +88,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     return key as number + 1;
   }
 
-  getDataBounds(data: DefaultGroupValue<TKey>[]) {
+  _getDataBounds(data: DefaultGroupValue<TKey>[]) {
     const { dimensionSelector, valueAccessor, dim, emptyKey } = this.props;
     const isDate = emptyKey instanceof Date;
     // If there's no data, we can't determine the bounds.
@@ -114,7 +114,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     // Work out what the next X point would be.
     // This is to be used for working out what the drawn bounds of the chart
     // should be, and to make sure that the chart's end exceeds the data's end.
-    const nextX = this.nextBinX(this.maxX);
+    const nextX = this._nextBinX(this.maxX);
 
     // Work out what the maximum Y value is.
     const maxY = Math.max(...data.map(valueAccessor), 0);
@@ -127,7 +127,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     return { minX: this.minX || 0, maxX: this.maxX || 0, nextX, maxY, isDate };
   }
 
-  isBarIntersecting(d: DefaultGroupValue<TKey>): boolean {
+  _isBarIntersecting(d: DefaultGroupValue<TKey>): boolean {
     // Determine if the current filter intersects with the current bar.
     const currentFilter = this.dimension.currentFilter();
     if (!currentFilter) {
@@ -170,7 +170,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     return key < max && keyEnd > min;
   }
 
-  newScale(isDate = false) {
+  _newScale(isDate = false) {
     if (isDate) {
       return d3_scale.scaleTime();
     }
@@ -181,7 +181,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     console.log('BarChart render', this.cf.internal.size(), this.group.all());
 
     const data = this.group.all() as DefaultGroupValue<TKey>[];
-    const { minX, nextX, maxY, isDate } = this.getDataBounds(data);
+    const { minX, nextX, maxY, isDate } = this._getDataBounds(data);
 
     const {
       width, height,
@@ -195,12 +195,12 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     console.log(marginTop);
 
     // Generate/update our scales.
-    const x = this.xScale || (this.xScale = this.newScale(isDate));
+    const x = this.xScale || (this.xScale = this._newScale(isDate));
     x
       .domain([minX, nextX])
       .range([0, clipWidth]);
 
-    const y = this.yScale || (this.yScale = this.newScale());
+    const y = this.yScale || (this.yScale = this._newScale());
     y
       .domain([0, Math.max(1, maxY)])
       .range([0, clipHeight]);
@@ -228,9 +228,9 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
                 key={i}
                 x={x(key)}
                 y={clipHeight - y(valueAccessor(d))}
-                width={x(this.nextBinX(key)) - x(key)}
+                width={x(this._nextBinX(key)) - x(key)}
                 height={y(valueAccessor(d))}
-                fill={this.isBarIntersecting(d) ? "steelblue" : "gray"}
+                fill={this._isBarIntersecting(d) ? "steelblue" : "gray"}
               >
                 <title>{titleFunc(d)}</title>
               </rect>);
