@@ -30,7 +30,9 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     width: 960,
     height: 130,
 
-    titleFunc: (d) => `${d.key}: ${d.value}`,
+    // In practice, DefaultGroupValue<TKey>, but we can't reference TKey in
+    // the static context where we set defaultProps.
+    titleFunc: (d: DefaultGroupValue<any>) => `${d.key}: ${d.value}`,
     emptyKey: 0,
   };
 
