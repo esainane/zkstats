@@ -10,7 +10,7 @@ type LoadWaitProps = {
  * Simple element that displays a loading message until the provided promise
  * resolves, then renders its children.
  */
-class LoadWait extends Component<{}, {resolved: boolean}> {
+export class LoadWait extends Component<{}, {resolved: boolean}> {
   props: LoadWaitProps;
   constructor(props: LoadWaitProps) {
     super(props);

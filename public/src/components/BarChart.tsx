@@ -196,6 +196,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
     const { minX, nextX, maxY, isDate } = this._getDataBounds(data);
 
     const {
+      children,
       width, height,
       marginLeft, marginRight, marginTop, marginBottom,
       keyAccessor, valueAccessor,
@@ -266,6 +267,7 @@ class BarChart<TKey extends NaturallyOrderedValue> extends CrossfilterChart<BarC
               </g>
             ))}
           </g>
+          {children}
           <g class="brush" ref={node => this.brushNode = node} />
         </g>
         <defs>
