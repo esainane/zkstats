@@ -13,7 +13,6 @@ body {
 /* Top-level layout */
 .side {
   float: right;
-  border-left: 1px solid lightgray;
 }
 #main {
   overflow: hidden;
@@ -137,7 +136,6 @@ h3 {
 /* Chart meta info */
 
 p.info {
-  color: #777;
   font: 10px sans-serif;
   margin: 0 .4em;
   padding: 0;
@@ -145,7 +143,6 @@ p.info {
 
 p.filterinfo {
   font: 11px sans-serif;
-  color: #555;
   margin: .4em;
   padding: 0;
   /* Specify size and block specifically, so that the space needed is always reserved */
@@ -157,7 +154,6 @@ p.filterinfo {
 
 .dv-record-container {
   font: 10px sans-serif;
-  color: #555;
   margin: .4em;
   padding: 0;
   height: 10px;
@@ -165,8 +161,7 @@ p.filterinfo {
 
 /* Charts */
 
-.dc-chart, .mv-chart {
-  border-bottom: 1px #eee solid;
+.dc-chart {
   float: left;
 }
 
@@ -187,21 +182,48 @@ p.filterinfo {
 }
 
 /* Non-layout critical style niceties */
+
+/* Dark theme by default */
+:root {
+  --color-bg: #252323;
+  --faint-separator: #333;
+  --color-fg: #eeeeee;
+  --subdued-foreground: #999;
+  --color-link: #0ec0ee;
+  --color-link-hover: #0fc4f2;
+}
+
+/* If light theme is explicitly set, use it */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #eeeeee;
+    --faint-separator: #ddd;
+    --color-fg: #111111;
+    --subdued-foreground: #666;
+    --color-link: #0066aa;
+    --color-link-hover: #005580;
+  }
+}
+
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
-  color: #333333;
-  background-color: #ffffff;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+}
+
+.side {
+  border-left: 1px solid var(--faint-separator);
 }
 
 a {
-  color: #0066aa;
+  color: var(--color-link);
   text-decoration: none;
 }
 
 a:hover {
-  color: #005580;
+  color: var(--color-link-hover);
   text-decoration: underline;
 }
 
@@ -216,4 +238,22 @@ a:hover {
   align-items: start;
   margin: 0 auto;
   max-width: 100%;
+}
+
+/* .info is not used in current configuration, but we'll set sane defaults anyway. */
+p.info {
+  /* Note that previously, this had an intensity between full foreground and subdued foreground. */
+  color: var(--subdued-foreground);
+}
+
+p.filterinfo {
+  color: var(--subdued-foreground);
+}
+
+.dv-record-container {
+  color: var(--subdued-foreground);
+}
+
+.dc-chart {
+  border-bottom: 1px var(--faint-separator) solid;
 }
