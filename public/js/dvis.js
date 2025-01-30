@@ -357,7 +357,7 @@ var dv = (function(dv) {
         coerce = d => [d[conf.dim.rows], d[conf.dim.cols]].sort();
       }
       const h = dim(v, conf, coerce);
-      const colorScale = d3.piecewise(d3.interpolateHslLong, ["#ff0000", "#ff0000", "#cccccc", "#0000ff", "#0000ff"]);
+      const colorScale = d3.piecewise(d3.interpolateHslLong, ["#ff0000ff", "#ff0000ff", "#cccccc11", "#0000ffff", "#0000ffff"]);
       const ret = matchupChart("#" + dl + "-dvchart")
         .margins({left: 110, right: 18, top: 5, bottom: 110})
         .height(colTypeToWidth[conf.parent.type])
