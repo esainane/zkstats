@@ -44,37 +44,6 @@ body {
   font-size: smaller;
 }
 
-/* Columns */
-
-/* General column utility */
-.column-container {
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-.column-container > div {
-  position: relative;
-  float: left;
-}
-
-/* Separators between columns */
-.column-container-separated > div:first-child:before, .column-container-separated > div:first-child:after {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: 1;
-  top: 0; bottom: -800%; left:-6%;
-  width: 2px;
-  border: 1px solid #555;
-  border-width: 0 1px;
-  margin: 0 0 0 -2px;
-  background: #fff;
-}
-.column-container-separated > div:first-child:after {
-  left: auto; right: -6%;
-  margin: 0 -2px 0 0;
-}
-
 /* Top-level column widths */
 .wide {
   width: 600px;
