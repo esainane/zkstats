@@ -390,6 +390,7 @@ function matchupChart(parent, chartGroup) {
                 .style('text-anchor', _verticalXAxisTicks ? 'end' : 'middle')
                 .attr('y', _chart.effectiveHeight())
                 .attr('dy', _verticalXAxisTicks ? 6 : 12)
+                .attr('fill', 'currentColor')
                 .attr('text-rendering', 'optimizeLegibility')
                 .on('click', _chart.xAxisOnClick())
                 .text(_chart.colsLabel());
@@ -429,6 +430,7 @@ function matchupChart(parent, chartGroup) {
                     // console.log('row y', rows(d));
                     return rows(d) + boxHeight(d) / 2; })
                 .attr('dy', 6)
+                .attr('fill', 'currentColor')
                 .on('click', _chart.yAxisOnClick())
                 .text(_chart.rowsLabel())
             .merge(gRowsText);
