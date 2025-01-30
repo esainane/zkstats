@@ -226,3 +226,11 @@ p.filterinfo {
 .dc-chart {
   border-bottom: 1px var(--faint-separator) solid;
 }
+
+.dc-chart .axis path, .dc-chart .axis line {
+  stroke: var(--subdued-foreground);
+}
+
+.dc-chart .pie-slice {
+  fill: var(--color-fg);
+}
