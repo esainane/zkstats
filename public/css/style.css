@@ -204,3 +204,16 @@ a:hover {
   color: #005580;
   text-decoration: underline;
 }
+
+#vis-container {
+  display: flex;
+  justify-content: center;
+}
+
+#vis {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  margin: 0 auto;
+  max-width: 100%;
+}
