@@ -68,7 +68,8 @@
           "dates": true,
           "elasticX": true,
           "group": "Week",
-          "dim_pretty": "Match start time",
+          "dim_pretty": "Match date",
+          "xAxisLabel": "Week of match start",
           "verticalXAxisTicks": true
         },{
           "vis": "bar",
@@ -76,7 +77,8 @@
           "group": 900,
           "logarithmic": true,
           "elasticX": false,
-          "dim_pretty": "Game Time (Frames, Logarithmic)",
+          "dim_pretty": "Match duration",
+          "xAxisLabel": "Frames (Logarithmic)",
           "verticalXAxisTicks": true
         },{
           "vis": "matchups",

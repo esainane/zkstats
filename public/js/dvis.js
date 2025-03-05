@@ -319,6 +319,9 @@ var dv = (function(dv) {
       if ('elasticX' in conf) {
         ret.elasticX(conf.elasticX);
       }
+      if ('xAxisLabel' in conf) {
+        ret.xAxisLabel(conf.xAxisLabel);
+      }
       return ret;
     }
     /* Create dimension, group, and chart in bar format, with some fixed parameters. */

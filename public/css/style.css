@@ -231,6 +231,10 @@ p.filterinfo {
   stroke: var(--subdued-foreground);
 }
 
+.dc-chart text.x-axis-label, .dc-chart text.y-axis-label {
+  fill: var(--color-fg);
+}
+
 .dc-chart .pie-slice {
   fill: var(--color-fg);
 }
