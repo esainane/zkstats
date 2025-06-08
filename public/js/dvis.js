@@ -370,7 +370,7 @@ var dv = (function(dv) {
         .keyAccessor(d => d.key[1])
         .valueAccessor(d => d.key[0])
         .colorAccessor(d => { const wr = d.value[0] / (d.value[0] + d.value[1]); return wr; })
-        .colors(c => isNaN(c) ? '#ffffff' : colorScale(c))
+        .colors(c => isNaN(c) ? '#ffffff00' : colorScale(c))
         .title(d => `${d.key[0]} vs ${d.key[1]}: ${d.value[0]}:${d.value[1]} (${parseInt(d.value[0] / (d.value[0] + d.value[1]) * 100)}%)`)
         ;
       if (conf.order) {
