@@ -371,7 +371,11 @@ var dv = (function(dv) {
         .valueAccessor(d => d.key[0])
         .colorAccessor(d => { const wr = d.value[0] / (d.value[0] + d.value[1]); return wr; })
         .colors(c => isNaN(c) ? '#ffffff00' : colorScale(c))
-        .title(d => `${d.key[0]} vs ${d.key[1]}: ${d.value[0]}:${d.value[1]} (${parseInt(d.value[0] / (d.value[0] + d.value[1]) * 100)}%)`)
+        .title(d => `${d.key[0]} vs ${d.key[1]}: ${
+          d.value[0] + d.value[1] > 0
+            ? `${d.value[0]}:${d.value[1]} (${parseInt(d.value[0] / (d.value[0] + d.value[1]) * 100)}%)`
+            : 'No data'
+        }`)
         ;
       if (conf.order) {
         const incrementingRange = values.map((d,i) => i);
