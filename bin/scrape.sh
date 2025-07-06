@@ -5,12 +5,8 @@ set -e
 scrape_all_battles() {
     local offset="$1"
     shift
-    while [ $# -gt 0 ]; do
-        local title="$1"
-        shift
-        curl -s "https://zero-k.info/Battles?Title=${title}&Map=&PlayersFrom=2&PlayersTo=2&Age=0&Mission=2&Bots=2&Rank=8&Victory=0&Offset=$offset" | sed -n "s_^.*<a href='/Battles/Detail/\([0-9]\+\)'.*\$_\1_p"
-        sleep 0.2
-    done
+    curl -s "https://zero-k.info/Battles?Title=&Map=&PlayersFrom=2&PlayersTo=2&Age=0&MinLength=&MaxLength=&Mission=2&Bots=2&Rank=8&Victory=0&Matchmaker=0&Rating=3&Offset=$offset" | sed -n "s_^.*<a href='/Battles/Detail/\([0-9]\+\)'.*\$_\1_p"
+    sleep 0.2
 }
 
 commit_shard() {
@@ -88,4 +84,4 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
-main "$1" "$2" "MM+" "[A]%20Pro%201v1%20Host"
+main "$1" "$2"
