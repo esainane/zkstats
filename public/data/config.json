@@ -33,6 +33,15 @@
       "Shipyard": "#6e8df0",
       "Strider Hub": "#ee0e08",
       "Never": "#ffffff00"
+    },
+    "map-type": {
+      "Flat": "#b59e66",
+      "Light Hills": "#79b55b",
+      "Hills": "#1f6832",
+      "Mixed": "#1dc2a6",
+      "Sea": "#0b54ef",
+      "Silly": "#aa4592",
+      "Unknown": "#c04c40"
     }
   },
   "columns": [
@@ -105,7 +114,8 @@
         },{
           "vis": "pie",
           "dim": "map_type",
-          "dim_pretty": "Matchmaking Map Type"
+          "dim_pretty": "Matchmaking Map Type",
+          "colors": "map-type"
         },{
           "vis": "pie",
           "dim": "mirror_match",
