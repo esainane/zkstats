@@ -63,7 +63,7 @@ shardify() {
     commit_shard "$last_shard"
 }
 
-main() {
+update_ids() {
     local start="$1"
     local end="$2"
     shift 2
@@ -71,6 +71,10 @@ main() {
     while read offset; do
         scrape_all_battles "$offset" "$@"
     done < <(seq "$start" 40 "$end") | grep -vxFf demos/exclude.txt | sort -n | shardify
+}
+
+main() {
+    update_ids "$@"
     echo "Delegating to makefile..."
     make -Rrk fetch
 }
