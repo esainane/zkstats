@@ -178,6 +178,6 @@ summaries/%/summary.json: stats/%/events.log postprocess.py
 # This fragment is comma separate list of summaries. When joined with
 # other shards using more commas, and the result is surrounded by start and
 # end array characters [ and ], the result is valid json.
-summaries/shard.json.frags: $(SUMMARIES)
-	find summaries/ -maxdepth 2 -name summary.json -exec cat {} + | paste -s -d, - > "$@.tmp"
+summaries/shard.json.frags: $(SUMMARIES) ../../demos/exclude.txt
+	find summaries/ -maxdepth 2 -name summary.json | grep -Fvf <(cut -d\  -f 1 ../../demos/exclude.txt | sed 's_^\(.*\)$$_/\1/_') | xargs cat |  paste -s -d, - > "$@.tmp"
 	mv -f "$@.tmp" "$@"
