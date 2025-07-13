@@ -17,13 +17,13 @@
 993234 Not actually a MM game
 993251 Not actually matchmaking
 993319 Not actually matchmaking
-994356 Desyncs. EGB block END.
+994356 Desyncs. EGB block START.
 994690 Desyncs. Runs to completion against EGB, but EGB is still reported as the winner from ZKI's perspective.
-994696 Desyncs. Suspicious as fuck, apocalyptic achiemvent award in an eight minute game. On *Wanderlust*.
+994696 Desyncs. Extremely suspicious: apocalyptic achiemvent award in an eight minute game. On *Wanderlust*.
 994702 Desyncs, though runs to completion
-994708 Desyncs. Suspicious as fuck, apocalyptic achievement award in a six minute game? Seriously?
+994708 Desyncs. Extremely suspicious: apocalyptic achievement award in a six minute game? Seriously?
 994712 Desyncs
-994770 Desyncs. EGB block START.
+994770 Desyncs. EGB block END.
 994805 Hangs - TODO investigate why
 1005839 Not actually matchmaking
 1005844 Not actually matchmaking
