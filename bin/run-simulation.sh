@@ -31,7 +31,7 @@ main() {
     ) > stats/$id/spring.log; then
         CODE=$?
         if [ "$CODE" -eq 127 -o "$CODE" -eq 137 ]; then
-            printf "%d (Automatic) Timeout reached, replay skipped. Added %s\n" "$id" "$(date --iso-8601)" >> demos/exclude.txt
+            printf "%d (Automatic) Timeout reached, replay skipped. Added %s\n" "$id" "$(date --iso-8601)" >> ../../demos/exclude.txt
         fi
         exit "$CODE"
     fi
