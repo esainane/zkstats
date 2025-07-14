@@ -160,7 +160,7 @@ demos/%/replay.sdfz: | demos/%/detail.html
 # Process the replay
 # Recipe pattern: Battle ID, eg: $* := 1606223
 stats/%/spring.log stats/%/events.log: demos/%/replay.sdfz
-	../../bin/run-simulation.sh "$*" "$<" "$(dir $@)" "$(ZKDIR)" "$(MAXSIMTIME)"
+	../../bin/run-simulation.sh "$*" "$<" "$(ZKDIR)" "$(MAXSIMTIME)"
 
 # Postprocess the events from the replay
 # Recipe pattern: Battle ID, eg: $* := 1606223

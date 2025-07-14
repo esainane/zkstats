@@ -11,12 +11,10 @@ run_timeout() {
 main() {
     local id="$1"
     local replay="$2"
-    local dir="$3"
-    local zkdir="$4"
-    local timeout="$5"
+    local zkdir="$3"
+    local timeout="$4"
 
-    mkdir -p "../../stats/$((id / 10000))"
-    mkdir -p "$dir"
+    mkdir -p "../../stats/$((id / 10000))/$id/"
     mkdir -p "$zkdir/LuaUI/Logs/replay_stats/$id/"
     local work_dir="$(mktemp -d)"
     trap 'rm -rf "${work_dir}"' EXIT
