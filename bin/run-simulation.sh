@@ -72,7 +72,7 @@ main() {
     mkdir -p "../../stats/$((id / 10000))/$id/"
     mkdir -p "$zkdir/LuaUI/Logs/replay_stats/$id/"
     local work_dir="$(mktemp -d)"
-    trap 'rm -rf "${work_dir}"' EXIT
+    trap "rm -rf '${work_dir}'" EXIT
 
     cat "$zkdir/springsettings.cfg" <(echo ZKHeadlessReplay=$id) > "${work_dir}/springsettings.$id.cfg"
 
@@ -82,7 +82,7 @@ main() {
     early_exit_watcher "$id" &
     # Start the simulation
     run_spring "$id" "$replay" "$zkdir" "$timeout" "$work_dir" &
-    trap 'set +e; rm -rf "${work_dir}"; kill %1 %2 2>/dev/null; rm -f "$OUTPUT"' EXIT
+    trap "set +e; rm -rf '${work_dir}'; kill %1 %2 2>/dev/null; rm -f '$OUTPUT'" EXIT
 
     # Wait for either the watcher or the simulation to finish
     wait -n %1 %2
