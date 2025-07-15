@@ -20,17 +20,6 @@ local function IsSpectator()
 	return false
 end
 
-local function setReplaySpeed (speed, i)
-	local s = Spring.GetGameSpeed()
-	if (speed > s) then	--speedup
-		Spring.SendCommands ("setminspeed " .. speed)
-		Spring.SendCommands ("setminspeed " ..0.1)
-	else	--slowdown
-		Spring.SendCommands ("setmaxspeed " .. speed)
-		Spring.SendCommands ("setmaxspeed " .. 3000.0)
-	end
-end
-
 function widget:Initialize()
 	if (not IsSpectator()) then
 		Spring.Echo("<Replay Speed> Not spectating. Widget removed.")
@@ -43,6 +32,10 @@ function widget:Initialize()
 		return
 	end
 	Spring.Echo("<Replay Speed> We appear to be in a replay/spectator, maxing out game speed.")
-	setReplaySpeed(3000.0)
+	local old_speed = Spring.GetGameSpeed()
+	Spring.SendCommands ("setmaxspeed " .. 3000.0)
+	Spring.SendCommands ("setminspeed " .. 3000.0)
+	Spring.SendCommands ("setmaxspeed " .. 3000.0)
+	Spring.Echo("<Replay Speed> Replay speed is now: " .. Spring.GetGameSpeed() .. ", from " .. old_speed .. ".")
 	widgetHandler:RemoveWidget()
 end
