@@ -56,7 +56,7 @@ run_spring() {
         CODE=$?
         # If the command was killed by timeout or SIGKILL, auto-skip it
         # Note that the watcher will kill this function, so it won't be triggered by the watcher.
-        if [ "$CODE" -eq 127 -o "$CODE" -eq 137 ]; then
+        if [ "$CODE" -eq 124 -o "$CODE" -eq 137 ]; then
             printf "%d (Automatic) Timeout reached, replay skipped. Added %s\n" "$id" "$(date --iso-8601)" >> ../../demos/exclude.txt
         fi
         exit "$CODE"
