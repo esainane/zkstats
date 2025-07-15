@@ -82,7 +82,7 @@ main() {
     early_exit_watcher "$id" &
     # Start the simulation
     run_spring "$id" "$replay" "$zkdir" "$timeout" "$work_dir" &
-    trap "set +e; rm -rf '${work_dir}'; kill %1 %2 2>/dev/null; rm -f '$OUTPUT'" EXIT
+    trap "set +e; rm -rf '${work_dir}'; kill %1 %2 2>/dev/null" EXIT
 
     # Wait for either the watcher or the simulation to finish
     wait -n %1 %2
