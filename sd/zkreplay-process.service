@@ -27,7 +27,7 @@ NoNewPrivileges=true
 
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/var/lib/zkreplay/stats /var/lib/zkreplay/summaries /var/lib/zkreplay/Zero-K
+ReadWritePaths=/var/lib/zkreplay/demos/exclude.txt /var/lib/zkreplay/stats /var/lib/zkreplay/summaries /var/lib/zkreplay/Zero-K
 
 PrivateTmp=true
 PrivateDevices=true
