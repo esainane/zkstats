@@ -134,7 +134,6 @@ with open(filename, 'r') as f:
         m = statsheader.match(line)
         if m:
             break
-        d('Uh oh, something\'s gone wrong - winner not followed by stats header!')
 
 if skip:
     print(json.dumps({'skip': True}))
