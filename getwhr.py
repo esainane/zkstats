@@ -200,7 +200,7 @@ class RateLimitTransport(httpx.AsyncBaseTransport):
     async def aclose(self) -> None:
         await self._transport.aclose()
 
-MAX_BATCH_SIZE = 300
+MAX_BATCH_SIZE = 250
 
 async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | None = None) -> tuple[list[WHRBattle], list[int]]:
     '''
@@ -235,9 +235,9 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
             headers={"Content-Type": "application/json"},
             json=request_body.model_dump(by_alias=True)
         )
-    except:
-        logging.warning(f"Exception during HTTP request for battle IDs: {len(battle_ids)=}")
-        raise
+    except MaxRetryError:
+        logging.warning(f"Retries exceeded during HTTP request for battle IDs: {len(battle_ids)=}")
+        return await split_request(battle_ids, client)
     try:
         response.raise_for_status()
     except httpx.HTTPStatusError as e:
@@ -262,24 +262,28 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
         if len(battle_ids) == 1:
             return [], battle_ids
         # Otherwise, split the request in half and try again.
-        mid = len(battle_ids) // 2
-        left_ids = battle_ids[:mid]
-        right_ids = battle_ids[mid:]
-        left, right = await asyncio.gather(
-            get_latest_ratings(left_ids, client),
-            get_latest_ratings(right_ids, client)
-        )
-        left_data, left_skipped = left
-        right_data, right_skipped = right
-        if len(left_data) + len(right_data) + len(left_skipped) + len(right_skipped) != len(battle_ids):
-            logging.warning(f"Mismatch in split request results length, {len(left_data)=} + {len(right_data)=} + {len(left_skipped)=} + {len(right_skipped)=} != {len(battle_ids)=}")
-        return left_data + right_data, left_skipped + right_skipped
+        return await split_request(battle_ids, client)
+
     battles_data = response.json()
     battles = [WHRBattle.model_validate(battle) for battle in battles_data]
     if len(battles) != len(battle_ids):
         missing_ids = set(battle_ids) - {battle.id for battle in battles}
         logging.warning(f"Request did not return data for all requested battles, {len(battles)=} != {len(battle_ids)=}. {missing_ids=}")
     return battles, []
+
+async def split_request(battle_ids: list[int], client: httpx.AsyncClient) -> tuple[list[WHRBattle], list[int]]:
+    mid = len(battle_ids) // 2
+    left_ids = battle_ids[:mid]
+    right_ids = battle_ids[mid:]
+    left, right = await asyncio.gather(
+        get_latest_ratings(left_ids, client),
+        get_latest_ratings(right_ids, client)
+    )
+    left_data, left_skipped = left
+    right_data, right_skipped = right
+    if len(left_data) + len(right_data) + len(left_skipped) + len(right_skipped) != len(battle_ids):
+        logging.warning(f"Mismatch in split request results length, {len(left_data)=} + {len(right_data)=} + {len(left_skipped)=} + {len(right_skipped)=} != {len(battle_ids)=}")
+    return left_data + right_data, left_skipped + right_skipped
 
 async def amain():
     parser = ArgumentParser(description="Fetch WHR data for all known battles")
