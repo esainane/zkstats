@@ -28,6 +28,7 @@ import httpx
 import logging
 from pydantic import BaseModel, Field, ConfigDict
 from time import monotonic
+from typing import cast, overload
 
 '''
 API:
@@ -151,8 +152,19 @@ class RateLimitTransport(httpx.AsyncBaseTransport):
 
         raise Exception("Unreachable")
 
+    @overload
+    async def _sleep(self, until: datetime) -> None: ...
+    @overload
+    async def _sleep(self, delay: timedelta) -> None: ...
     @singledispatchmethod
-    async def _sleep(self, until: datetime) -> None:
+    async def _sleep(self, _: None) -> None:
+        raise NotImplementedError()
+    # XXX: Workaround for pylance currently not simultaneously supporting @overload with @singledispatchmethod
+    # Remove this and replace with @_sleep.register when fixed
+    _sleep_register = cast(singledispatchmethod, _sleep).register
+
+    @_sleep_register
+    async def _(self, until: datetime) -> None:
         """
         Ensure that the next request is delayed until the specified datetime.
         Args:
@@ -162,7 +174,7 @@ class RateLimitTransport(httpx.AsyncBaseTransport):
         delay = (until - datetime.now()).total_seconds()
         await asyncio.sleep(delay)
 
-    @_sleep.register
+    @_sleep_register
     async def _(self, delay: timedelta) -> None:
         await asyncio.sleep(delay.total_seconds())
 
