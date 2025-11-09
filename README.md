@@ -1,8 +1,12 @@
 # ZK Stats
 
-Proof of concept processing of Zero-K replays, and visualisation of Zero-K matchup data.
+Interactive visualisation and processing of Zero-K 1v1 matchmaking data. Live at [zkstats.antihype.space](https://zkstats.antihype.space).
+
+![GoogleFrog's reaction to the first batch of ZKStats data, focusing on the colour coded factory matchups grid. The neutral colour block of hill factories vs hill factories is circled with the comment "Hill factories are balanced". The red column showing factories vs amph is pointed to with the comment "Amph Good". The red block of hill factories vs flat factories is circled, with the comment "Flats mostly beats Hill". The mostly very blue columns of factories vs Gunships and Planes is pointed to together, with the comment "Do not start air". The very red Amph vs Ships and slightly blue Hover vs Ships is circled with the comment "Avoid Amph in the sea". The top-right blue, bottom-left red block of flat factories vs flat factories is circled with the commnt "Hover > Rover > Tank". The mostly pure blue column of factories vs an opponent that never placed a factory, with the sole exception of a slightly red Shields vs Never Placed, is pointed to with the humourous comment "Plop a factory unless vs Shield", highlighting the lack of sample size display at the time. The single pure red Tanks vs Ships cell is circled and pointed to with a meme of a tank falling into the water while saying "I go kill submarine for the motherland", highlighting the absurdity.](https://curio.antihype.space/gf-reaction-zkstats.png)
 
 ## Design notes
+
+ZK Stats began as a simple proof of concept weekend project. It has grown significantly since then. A lot of legacy code remains. The original notes are preserved below.
 
 Scrape `http://zero-k.info/Battles?Title=MM&Map=&PlayersFrom=2&PlayersTo=2&Age=0&Mission=2&Bots=2&Rank=8&Victory=0&` - look for for IDs of the form `745990` in `http://zero-k.info/Battles/Detail/745990`
 
@@ -87,7 +91,7 @@ Process automated in the Makefile.
 
 ## Visualisation
 
-This repository contains example data at `public/data/all.json`, and is configured to find data at `public/data/live.json`. A symbolic link, `public/data/live.example.json` points to this example data. 
+This repository contains example data at `public/data/all.json`, and is configured to find data at `public/data/live.json`. A symbolic link, `public/data/live.example.json` points to this example data.
 
 To copy this link into the live location, to use the example data:
 
