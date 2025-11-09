@@ -325,7 +325,7 @@ async def amain():
     battle_ids = [summary['gameid'] for summary in all_summaries if not summary.get('skip', False)]
     if args.limit is not None:
         battle_ids = battle_ids[:args.limit]
-    print(f"Fetching WHR data for {len(battle_ids)} battles")
+    logging.info(f"Fetching WHR data for {len(battle_ids)} battles")
 
     try:
         result = await get_latest_ratings(battle_ids)
@@ -336,10 +336,10 @@ async def amain():
             error_text = json.dumps(error_json, indent=2)
         except:
             error_text = e.response.text
-        print(f"HTTP error while fetching WHR data: {e.response.status_code} - {error_text}")
+        logging.error(f"HTTP error while fetching WHR data: {e.response.status_code} - {error_text}")
         raise
     except Exception as e:
-        print(f"Error fetching WHR data: {e}")
+        logging.error(f"Error fetching WHR data: {e}")
         raise
 
     with open(args.skipped_output, 'w') as f:
@@ -358,7 +358,7 @@ async def amain():
     with open(args.output, 'w') as f:
         json.dump([battle.model_dump(by_alias=True) for battle in result.ratings], f)
 
-    print(f"Fetched WHR data for {len(result.ratings)} battles, skipped {len(result.skipped)}/{len(battle_ids)}, server omitted {len(result.missing)}/{len(battle_ids)} battles")
+    logging.info(f"Fetched WHR data for {len(result.ratings)} battles, skipped {len(result.skipped)}/{len(battle_ids)}, server omitted {len(result.missing)}/{len(battle_ids)} battles")
     if result.skipped:
         logging.warning(f"Skipped error inducing battles for {len(result.skipped)} battles: {result.skipped[:10]=}")
     if result.missing:
