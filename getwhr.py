@@ -361,6 +361,8 @@ async def amain():
     print(f"Fetched WHR data for {len(result.ratings)} battles, skipped {len(result.skipped)}/{len(battle_ids)}, server omitted {len(result.missing)}/{len(battle_ids)} battles")
     if result.skipped:
         logging.warning(f"Skipped error inducing battles for {len(result.skipped)} battles: {result.skipped[:10]=}")
+    if result.missing:
+        logging.warning(f"Missing battles from server for {len(result.missing)} battles: {result.missing[:10]=}")
     if null_data_battles:
         # Note: Frontend will categorize these as "Server sourced null" for WHR availability
         logging.warning(f"Received null WHR ratings for {len(null_data_battles)} battles: {null_data_battles[:10]=}")
