@@ -4,7 +4,7 @@ var dv = (function(dv) {
   const local = hash.substring(hash.indexOf('#')+1).split('|');
   /* Cap factory progression depth */
   const fac_progression_max = 5;
-  function assignWhr(match, fullWhrByMatch) {
+  function assignWhr(match, fullWhrByMatch, fullWhrSkipped, fullWhrMissing) {
     const whrdata = fullWhrByMatch[match.gameid];
     if (whrdata) {
       const [winner_whrdata, loser_whrdata] = [whrdata[match.winner_userid], whrdata[match.loser_userid]];
@@ -30,6 +30,10 @@ var dv = (function(dv) {
       } else {
         match.has_fullwhr = "UserID mismatch";
       }
+    } else if (fullWhrSkipped.includes(match.gameid)) {
+      match.has_fullwhr = "Skipped (Causing server error)";
+    } else if (fullWhrMissing.includes(match.gameid)) {
+      match.has_fullwhr = "Missing (Silently ignored by server)";
     } else {
       match.has_fullwhr = "No data";
     }
@@ -51,7 +55,7 @@ var dv = (function(dv) {
     match.winner_whr_lead = match.winner_whr - match.loser_whr;
   }
   /* Coerce our data file before use elsewhere */
-  function dataCoerce(data, config, mapTypes, fullWhr) {
+  function dataCoerce(data, config, mapTypes, fullWhr, fullWhrSkipped, fullWhrMissing) {
     const fac_progression_dch_fixup = a => {
       /* Strip duplicates */
       a = a.reduce((a,d) => a.includes(d) ? a : (a.push(d), a), []);
@@ -77,7 +81,7 @@ var dv = (function(dv) {
         continue;
       }
       if (local.includes("fullwhr")) {
-        assignWhr(match, fullWhrByMatch);
+        assignWhr(match, fullWhrByMatch, fullWhrSkipped, fullWhrMissing);
       }
 
       /* Track mirror match states for use as its own dimension. */
@@ -138,10 +142,20 @@ var dv = (function(dv) {
   dv.init = async function(configloc) {
     /* Fetch our configuration and data, coercing them as we go */
     let globalConfig = await d3.json(configloc);
-    let [data, mapTypes, fullWhr] = await Promise.all([d3.json(globalConfig.src), d3.json("data/map-types.json"), local.includes("fullwhr") ? d3.json("data/fullwhr.json") : Promise.resolve([])]);
+    let [data, mapTypes, fullWhr, fullWhrSkipped, fullWhrMissing] = await Promise.all([
+      d3.json(globalConfig.src),
+      d3.json("data/map-types.json"),
+      ...local.includes("fullwhr")
+        ? [
+          d3.json("data/fullwhr.json"),
+          d3.json("data/fullwhr-skipped.json"),
+          d3.json("data/fullwhr-missing.json"),
+        ]
+        : [Promise.resolve([]), Promise.resolve([]), Promise.resolve([])],
+    ]);
 
     globalConfig = configCoerce(globalConfig);
-    data = dataCoerce(data, globalConfig, mapTypes, fullWhr);
+    data = dataCoerce(data, globalConfig, mapTypes, fullWhr, fullWhrSkipped, fullWhrMissing);
 
     window.data = data;
     const cfdata = crossfilter(data);
