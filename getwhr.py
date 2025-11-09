@@ -18,6 +18,7 @@ from __future__ import annotations
 from argparse import ArgumentParser
 import asyncio
 from collections import deque
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from email.utils import parsedate_to_datetime
 from functools import singledispatchmethod
@@ -203,7 +204,27 @@ class RateLimitTransport(httpx.AsyncBaseTransport):
 
 MAX_BATCH_SIZE = 250
 
-async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | None = None) -> tuple[list[WHRBattle], list[int], list[int]]:
+@dataclass(slots=True, frozen=True)
+class WHRAggregateResult:
+    ratings: list[WHRBattle]
+    skipped: list[int]
+    missing: list[int]
+
+    def __len__(self) -> int:
+        return len(self.ratings) + len(self.skipped) + len(self.missing)
+
+    def __add__(self, other: WHRAggregateResult) -> WHRAggregateResult:
+        return WHRAggregateResult(
+            ratings=self.ratings + other.ratings,
+            skipped=self.skipped + other.skipped,
+            missing=self.missing + other.missing
+        )
+
+    @staticmethod
+    def empty() -> WHRAggregateResult:
+        return WHRAggregateResult([], [], [])
+
+async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | None = None) -> WHRAggregateResult:
     '''
     Request WHR values for the given list of player IDs.
 
@@ -213,7 +234,7 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
         - Battle IDs missing, silently omitted from server responses
     '''
     if len(battle_ids) == 0:
-        return [], [], []
+        return WHRAggregateResult.empty()
     if client is None:
         # Rate limit to 3 requests per 1 second
         # Update based on ZKI DosProtect.cs and empirical testing
@@ -221,18 +242,11 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
             return await get_latest_ratings(battle_ids, client)
     if len(battle_ids) > MAX_BATCH_SIZE:
         # Ensure we don't make extremely large requests which time out
-        all_data = []
-        all_skipped = []
-        all_missing = []
         batch_data = await asyncio.gather(*[
             get_latest_ratings(list(batch), client)
             for batch in batched(battle_ids, MAX_BATCH_SIZE)
         ])
-        for data, skipped, missing in batch_data:
-            all_data.extend(data)
-            all_skipped.extend(skipped)
-            all_missing.extend(missing)
-        return all_data, all_skipped, all_missing
+        return sum(batch_data, WHRAggregateResult.empty())
 
     request_body = WHRBattlesRequest(battleids=battle_ids)
     try:
@@ -266,7 +280,7 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
         # Looks like this was the situation.
         # If we're down to a single failing ID, identify this as the problem and skip it.
         if len(battle_ids) == 1:
-            return [], battle_ids, []
+            return WHRAggregateResult([], battle_ids, [])
         # Otherwise, split the request in half and try again.
         return await split_request(battle_ids, client)
 
@@ -277,9 +291,9 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
         missing_ids = set(battle_ids) - {battle.id for battle in battles}
         logging.warning(f"Request did not return data for all requested battles, {len(battles)=} != {len(battle_ids)=}. {missing_ids=}")
         missing = list(missing_ids)
-    return battles, [], missing
+    return WHRAggregateResult(battles, [], missing)
 
-async def split_request(battle_ids: list[int], client: httpx.AsyncClient) -> tuple[list[WHRBattle], list[int], list[int]]:
+async def split_request(battle_ids: list[int], client: httpx.AsyncClient) -> WHRAggregateResult:
     mid = len(battle_ids) // 2
     left_ids = battle_ids[:mid]
     right_ids = battle_ids[mid:]
@@ -287,11 +301,9 @@ async def split_request(battle_ids: list[int], client: httpx.AsyncClient) -> tup
         get_latest_ratings(left_ids, client),
         get_latest_ratings(right_ids, client)
     )
-    left_data, left_skipped, left_missing = left
-    right_data, right_skipped, right_missing = right
-    if sum(len(l) for l in [left_data, right_data, left_skipped, right_skipped, left_missing, right_missing]) != len(battle_ids):
-        logging.warning(f"Mismatch in split request results length, {len(left_data)=} + {len(right_data)=} + {len(left_skipped)=} + {len(right_skipped)=} + {len(left_missing)=} + {len(right_missing)=} != {len(battle_ids)=}")
-    return left_data + right_data, left_skipped + right_skipped, left_missing + right_missing
+    if len(left) + len(right) != len(battle_ids):
+        logging.warning(f"Mismatch in split request results length, {len(left.ratings)=} + {len(right.ratings)=} + {len(left.skipped)=} + {len(right.skipped)=} + {len(left.missing)=} + {len(right.missing)=} != {len(battle_ids)=}")
+    return left + right
 
 async def amain():
     parser = ArgumentParser(description="Fetch WHR data for all known battles")
@@ -316,7 +328,7 @@ async def amain():
     print(f"Fetching WHR data for {len(battle_ids)} battles")
 
     try:
-        whr_data, skipped, missing = await get_latest_ratings(battle_ids)
+        result = await get_latest_ratings(battle_ids)
     except httpx.HTTPStatusError as e:
         try:
             # Attempt to format the response text as json first
@@ -331,24 +343,24 @@ async def amain():
         raise
 
     with open(args.skipped_output, 'w') as f:
-        json.dump(skipped, f)
+        json.dump(result.skipped, f)
     with open(args.missing_output, 'w') as f:
-        json.dump(missing, f)
+        json.dump(result.missing, f)
 
     # Verify ZKI didn't silently give us null values again
     null_data_battles = []
-    for battle in whr_data:
+    for battle in result.ratings:
         for player in battle.players:
             if player.rating is None:
                 null_data_battles.append(battle.id)
                 break
 
     with open(args.output, 'w') as f:
-        json.dump([battle.model_dump(by_alias=True) for battle in whr_data], f)
+        json.dump([battle.model_dump(by_alias=True) for battle in result.ratings], f)
 
-    print(f"Fetched WHR data for {len(whr_data)} battles, skipped {len(skipped)}/{len(battle_ids)}")
-    if skipped:
-        logging.warning(f"Skipped error inducing battles for {len(skipped)} battles: {skipped[:10]=}")
+    print(f"Fetched WHR data for {len(result.ratings)} battles, skipped {len(result.skipped)}/{len(battle_ids)}, server omitted {len(result.missing)}/{len(battle_ids)} battles")
+    if result.skipped:
+        logging.warning(f"Skipped error inducing battles for {len(result.skipped)} battles: {result.skipped[:10]=}")
     if null_data_battles:
         # Note: Frontend will categorize these as "Server sourced null" for WHR availability
         logging.warning(f"Received null WHR ratings for {len(null_data_battles)} battles: {null_data_battles[:10]=}")
