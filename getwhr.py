@@ -142,7 +142,7 @@ class RateLimitTransport(httpx.AsyncBaseTransport):
                         logging.info(f'HTTP Request: {request.url} "429 Too Many Requests" attempt {attempt}/{self._retries}')
                     case _:
                         return response
-            except (httpx.ConnectTimeout, httpx.ReadTimeout) as e:
+            except (httpx.ConnectTimeout, httpx.ReadTimeout, httpx.PoolTimeout) as e:
                 logging.info(f"{type(e).__name__} {request.url} attempt {attempt}/{self._retries}")
             if attempt >= self._retries:
                 raise MaxRetryError(f"Maximum retry attempts reached for {request.url}")
