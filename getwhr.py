@@ -250,7 +250,7 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
     if client is None:
         # Rate limit to 3 requests per 1 second
         # Update based on ZKI DosProtect.cs and empirical testing
-        async with httpx.AsyncClient(transport=RateLimitTransport(max_calls=5, period=1, retries=10)) as client:
+        async with httpx.AsyncClient(transport=RateLimitTransport(max_calls=5, period=1, retries=4)) as client:
             return await get_latest_ratings(battle_ids, client)
     if len(battle_ids) > MAX_BATCH_SIZE:
         # Ensure we don't make extremely large requests which time out
