@@ -18,6 +18,7 @@ from __future__ import annotations
 from argparse import ArgumentParser
 import asyncio
 from collections import deque
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from email.utils import parsedate_to_datetime
@@ -236,7 +237,7 @@ class WHRAggregateResult:
     def empty() -> WHRAggregateResult:
         return WHRAggregateResult([], [], [])
 
-async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | None = None) -> WHRAggregateResult:
+async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient, max_batch_size: int = MAX_BATCH_SIZE) -> WHRAggregateResult:
     '''
     Request WHR values for the given list of player IDs.
 
@@ -247,16 +248,11 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
     '''
     if len(battle_ids) == 0:
         return WHRAggregateResult.empty()
-    if client is None:
-        # Rate limit to 3 requests per 1 second
-        # Update based on ZKI DosProtect.cs and empirical testing
-        async with httpx.AsyncClient(transport=RateLimitTransport(max_calls=5, period=1, retries=4)) as client:
-            return await get_latest_ratings(battle_ids, client)
-    if len(battle_ids) > MAX_BATCH_SIZE:
+    if len(battle_ids) > max_batch_size:
         # Ensure we don't make extremely large requests which time out
         batch_data = await asyncio.gather(*[
             get_latest_ratings(list(batch), client)
-            for batch in batched(battle_ids, MAX_BATCH_SIZE)
+            for batch in batched(battle_ids, max_batch_size)
         ])
         return sum(batch_data, WHRAggregateResult.empty())
 
@@ -297,6 +293,7 @@ async def get_latest_ratings(battle_ids: list[int], client: httpx.AsyncClient | 
         return await split_request(battle_ids, client)
 
     battles_data = response.json()
+    # Track battles missing from the response: Battles which we asked for, but the server silently did not include
     battles = [WHRBattle.model_validate(battle) for battle in battles_data]
     missing = []
     if len(battles) != len(battle_ids):
@@ -322,8 +319,8 @@ async def amain():
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
     parser.add_argument('--input', '-i', default='public/data/live.json', help='Input JSON file with battle summaries (default: public/data/live.json)')
     parser.add_argument('--output', '-o', default='demos/fullwhr.json', help='Output JSON file for WHR data (default: demos/fullwhr.json)')
-    parser.add_argument('--skipped-output', '-s', default='demos/fullwhr-skipped.json', help='Output JSON file for skipped battle IDs (default: demos/fullwhr-skipped.json)')
-    parser.add_argument('--missing-output', '-m', default='demos/fullwhr-missing.json', help='Output JSON file for missing battle IDs (default: demos/fullwhr-missing.json)')
+    parser.add_argument('--skipped-output', '-s', default='demos/fullwhr-skipped.json', help='Output JSON file for battle IDs which we had to not request to avoid ZKI errors (default: demos/fullwhr-skipped.json)')
+    parser.add_argument('--missing-output', '-m', default='demos/fullwhr-missing.json', help='Output JSON file for battle IDs which ZKI silently did not provide responses for (default: demos/fullwhr-missing.json)')
     parser.add_argument('--limit', '-l', type=int, default=None, help='Limit to this many battles from the input file (default: all)')
     args = parser.parse_args()
     logging.basicConfig(
@@ -338,9 +335,23 @@ async def amain():
     if args.limit is not None:
         battle_ids = battle_ids[:args.limit]
     logging.info(f"Fetching WHR data for {len(battle_ids)} battles")
+    previously_skipped_ids: set[int] = set()
+    with suppress(FileNotFoundError):
+        with open(args.skipped_output) as skipped_ids:
+            previously_skipped_ids = set(json.load(skipped_ids))
 
     try:
-        result = await get_latest_ratings(battle_ids)
+        # Rate limit to 3 requests per 1 second
+        # Update based on ZKI DosProtect.cs and empirical testing
+        async with httpx.AsyncClient(transport=RateLimitTransport(max_calls=5, period=1, retries=4)) as client:
+            # Assume that if IDs needed to be previously skipped, they probably need to be skipped again.
+            # Note that these don't seem fully stable, and differ between the ZKI test and production environments.
+            # All IDs which previously needed to be skipped are made into single requests.
+            # These potentially killer IDs are removed from bulk requests, to maximize the odds that bulk requests succeed.
+            result = sum(await asyncio.gather(
+                get_latest_ratings(list(previously_skipped_ids), client, max_batch_size=1),
+                get_latest_ratings([i for i in battle_ids if i not in previously_skipped_ids], client),
+            ), WHRAggregateResult.empty())
     except httpx.HTTPStatusError as e:
         try:
             # Attempt to format the response text as json first
