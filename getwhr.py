@@ -343,7 +343,19 @@ async def amain():
     try:
         # Rate limit to 3 requests per 1 second
         # Update based on ZKI DosProtect.cs and empirical testing
-        async with httpx.AsyncClient(transport=RateLimitTransport(max_calls=5, period=1, retries=4)) as client:
+
+        # By DeinFreund's commentary, lookups are very fast, since it's all in ZKI memory.
+        # In practice, read timeouts happen often if left at 5s. Tripling the read timeout still sees the occassional timeout, but infrequently.
+        # Rolling unrecoverable pool timeouts is an uncommon failure mode. Quadrupling the pool timeout seems to eliminate this case.
+        # The connection pool is halved to speculatively avoid locking hell. We should only need 5 or so parallel connections, but reducing
+        # the number that far causes performance issues in practice.
+        # XXX: There shouldn't be much non-I/O connection housekeeping required. Work out what's going on here.
+        async with httpx.AsyncClient(
+            http2=True,
+            timeout=httpx.Timeout(5, read=15, pool=20),
+            limits=httpx.Limits(max_connections=50, max_keepalive_connections=20),
+            transport=RateLimitTransport(max_calls=5, period=1, retries=4)
+        ) as client:
             # Assume that if IDs needed to be previously skipped, they probably need to be skipped again.
             # Note that these don't seem fully stable, and differ between the ZKI test and production environments.
             # All IDs which previously needed to be skipped are made into single requests.
