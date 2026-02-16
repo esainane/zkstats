@@ -6,7 +6,7 @@ Type=simple
 User=zkreplay
 Group=zkreplay
 
-ExecStart=/var/lib/zkreplay/sd/status.sh
+ExecStart=/var/lib/zkreplay/bin/status.sh
 WorkingDirectory=/var/lib/zkreplay
 
 # Play nicely with other processes on the system. We're pretty low priority.
