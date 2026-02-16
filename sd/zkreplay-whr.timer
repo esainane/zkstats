@@ -6,4 +6,4 @@ OnCalendar=daily
 RandomizedDelaySec=6000
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=timers.target
